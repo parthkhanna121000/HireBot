@@ -358,8 +358,8 @@ Status      Candidate
 
 **Your Name**
 
-- GitHub: [@YOUR_USERNAME](https://github.com/YOUR_USERNAME)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
+- GitHub: (https://github.com/parthkhanna121000)
+- LinkedIn: (https://www.linkedin.com/in/parth-khanna-17a380278/)
 
 ---
 
