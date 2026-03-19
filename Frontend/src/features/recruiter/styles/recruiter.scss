@@ -1,0 +1,832 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap");
+
+// ── Tokens ──────────────────────────────────────────────────────
+$brand:        #185FA5;
+$brand-dark:   #0C447C;
+$brand-light:  rgba(24, 95, 165, 0.12);
+$accent:       #1D9E75;
+$accent-light: rgba(29, 158, 117, 0.12);
+$amber:        #BA7517;
+$amber-light:  rgba(186, 117, 23, 0.12);
+$red:          #dc2626;
+$red-light:    rgba(220, 38, 38, 0.1);
+$purple:       #7c3aed;
+$purple-light: rgba(124, 58, 237, 0.1);
+
+$bg:           #161616;
+$surface:      #1f1f1f;
+$surface2:     #252525;
+$surface3:     #2a2a2a;
+$border:       rgba(255, 255, 255, 0.07);
+$border2:      rgba(255, 255, 255, 0.12);
+
+$text1:        #f5f5f5;
+$text2:        #9ca3af;
+$text3:        #4b5563;
+
+$sidebar-w:    240px;
+$topbar-h:     60px;
+$radius-sm:    8px;
+$radius-md:    12px;
+$radius-lg:    16px;
+
+// ── Layout Shell ────────────────────────────────────────────────
+.recruiter-layout {
+  display: flex;
+  min-height: 100vh;
+  background: $bg;
+  font-family: "DM Sans", sans-serif;
+  color: $text1;
+}
+
+// ── Sidebar ─────────────────────────────────────────────────────
+.sidebar {
+  width: $sidebar-w;
+  background: $surface;
+  border-right: 1px solid $border;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 50;
+  transition: transform 0.25s ease;
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 1.25rem;
+    height: $topbar-h;
+    border-bottom: 1px solid $border;
+    flex-shrink: 0;
+
+    .logo-mark {
+      width: 30px;
+      height: 30px;
+      background: $brand;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Syne", sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    span {
+      font-family: "Syne", sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      color: $text1;
+    }
+  }
+
+  .sidebar-section {
+    padding: 1rem 0.75rem 0.25rem;
+
+    .sidebar-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: $text3;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 0 0.5rem;
+      margin-bottom: 4px;
+    }
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.6rem 0.75rem;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-size: 14px;
+    color: $text2;
+    transition: all 0.15s ease;
+    margin-bottom: 2px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: "DM Sans", sans-serif;
+
+    svg { flex-shrink: 0; opacity: 0.7; }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: $text1;
+      svg { opacity: 1; }
+    }
+
+    &.active {
+      background: $brand-light;
+      color: #93c5fd;
+      font-weight: 500;
+      svg { opacity: 1; color: #93c5fd; }
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: $brand;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 7px;
+      border-radius: 40px;
+      min-width: 20px;
+      text-align: center;
+    }
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 0.75rem;
+    border-top: 1px solid $border;
+
+    .recruiter-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0.6rem 0.5rem;
+      border-radius: $radius-sm;
+      cursor: pointer;
+      transition: background 0.15s ease;
+
+      &:hover { background: rgba(255,255,255,0.04); }
+
+      .avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: $brand-light;
+        border: 1px solid rgba(24,95,165,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 600;
+        color: #93c5fd;
+        flex-shrink: 0;
+      }
+
+      .profile-info {
+        flex: 1;
+        overflow: hidden;
+
+        .profile-name {
+          font-size: 13px;
+          font-weight: 500;
+          color: $text1;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .profile-role {
+          font-size: 11px;
+          color: $text3;
+        }
+      }
+    }
+  }
+}
+
+// ── Main content ─────────────────────────────────────────────────
+.main-content {
+  margin-left: $sidebar-w;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+// ── Top bar ──────────────────────────────────────────────────────
+.topbar {
+  height: $topbar-h;
+  border-bottom: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.75rem;
+  background: $surface;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+
+  .topbar-left {
+    .page-title {
+      font-family: "Syne", sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: $text1;
+    }
+    .page-subtitle {
+      font-size: 12px;
+      color: $text3;
+    }
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: $radius-sm;
+      background: $surface2;
+      border: 1px solid $border;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: $text2;
+      position: relative;
+      transition: background 0.15s ease;
+
+      &:hover { background: $surface3; color: $text1; }
+
+      .notif-dot {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: $red;
+        border: 1.5px solid $surface;
+      }
+    }
+
+    .btn-post-job {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0.5rem 1rem;
+      background: $brand;
+      color: #fff;
+      border: none;
+      border-radius: $radius-sm;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: "DM Sans", sans-serif;
+      transition: background 0.2s ease;
+
+      &:hover { background: $brand-dark; }
+    }
+  }
+}
+
+// ── Page body ────────────────────────────────────────────────────
+.page-body {
+  padding: 1.75rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// ── Stat cards ───────────────────────────────────────────────────
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.stat-card {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  padding: 1.25rem 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: border-color 0.2s ease;
+
+  &:hover { border-color: $border2; }
+
+  .stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .stat-label {
+      font-size: 12px;
+      color: $text2;
+      font-weight: 500;
+    }
+
+    .stat-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: $radius-sm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .stat-value {
+    font-family: "Syne", sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: $text1;
+    line-height: 1;
+  }
+
+  .stat-delta {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    &.up   { color: $accent; }
+    &.down { color: $red; }
+    &.neutral { color: $text3; }
+  }
+}
+
+// ── Section header ───────────────────────────────────────────────
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+
+  .section-title {
+    font-family: "Syne", sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: $text1;
+  }
+
+  .section-action {
+    font-size: 13px;
+    color: #60a5fa;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: "DM Sans", sans-serif;
+    padding: 0;
+
+    &:hover { color: #93c5fd; }
+  }
+}
+
+// ── Two-col grid ─────────────────────────────────────────────────
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+// ── Job listings panel ───────────────────────────────────────────
+.jobs-panel {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  overflow: hidden;
+
+  .job-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid $border;
+    transition: background 0.15s ease;
+    cursor: pointer;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: rgba(255,255,255,0.02); }
+
+    .job-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: $radius-sm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .job-info {
+      flex: 1;
+      min-width: 0;
+
+      .job-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: $text1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .job-meta {
+        font-size: 11px;
+        color: $text3;
+        margin-top: 2px;
+      }
+    }
+
+    .job-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+
+      .applicant-count {
+        font-size: 12px;
+        color: $text2;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  .jobs-empty {
+    padding: 2.5rem;
+    text-align: center;
+    color: $text3;
+    font-size: 14px;
+  }
+}
+
+// ── Status badge ─────────────────────────────────────────────────
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 40px;
+
+  &.badge-active   { background: $accent-light; color: #34d399; }
+  &.badge-paused   { background: $amber-light;  color: #fbbf24; }
+  &.badge-closed   { background: $red-light;    color: #f87171; }
+  &.badge-draft    { background: rgba(255,255,255,0.06); color: $text2; }
+  &.badge-new      { background: $brand-light; color: #93c5fd; }
+  &.badge-shortlisted { background: $accent-light; color: #34d399; }
+  &.badge-rejected { background: $red-light; color: #f87171; }
+}
+
+// ── Candidates panel ─────────────────────────────────────────────
+.candidates-panel {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  overflow: hidden;
+
+  .candidate-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid $border;
+    transition: background 0.15s ease;
+    cursor: pointer;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: rgba(255,255,255,0.02); }
+
+    .c-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .c-info {
+      flex: 1;
+      min-width: 0;
+
+      .c-name {
+        font-size: 13px;
+        font-weight: 500;
+        color: $text1;
+      }
+
+      .c-role {
+        font-size: 11px;
+        color: $text3;
+        margin-top: 1px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .c-score {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+
+      .score-num {
+        font-family: "Syne", sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+
+        &.high   { color: #34d399; }
+        &.medium { color: #fbbf24; }
+        &.low    { color: #f87171; }
+      }
+
+      .score-label {
+        font-size: 10px;
+        color: $text3;
+      }
+    }
+
+    .c-actions {
+      display: flex;
+      gap: 6px;
+      margin-left: 8px;
+
+      button {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 500;
+        cursor: pointer;
+        border: 1px solid $border;
+        background: $surface2;
+        color: $text2;
+        font-family: "DM Sans", sans-serif;
+        transition: all 0.15s ease;
+
+        &.shortlist {
+          background: $accent-light;
+          border-color: rgba(29,158,117,0.25);
+          color: #34d399;
+          &:hover { background: rgba(29,158,117,0.2); }
+        }
+
+        &.reject {
+          &:hover {
+            background: $red-light;
+            border-color: rgba(220,38,38,0.3);
+            color: #f87171;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ── Activity feed ────────────────────────────────────────────────
+.activity-feed {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .activity-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+
+    .activity-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+
+      &.blue   { background: $brand; }
+      &.green  { background: $accent; }
+      &.amber  { background: $amber; }
+      &.red    { background: $red; }
+    }
+
+    .activity-text {
+      font-size: 13px;
+      color: $text2;
+      line-height: 1.5;
+
+      strong { color: $text1; font-weight: 500; }
+    }
+
+    .activity-time {
+      font-size: 11px;
+      color: $text3;
+      margin-top: 2px;
+    }
+  }
+}
+
+// ── Mini score bar ───────────────────────────────────────────────
+.mini-bar {
+  height: 4px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 4px;
+  overflow: hidden;
+  width: 60px;
+
+  .mini-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+  }
+}
+
+// ── Quick actions ────────────────────────────────────────────────
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+
+  .qa-card {
+    background: $surface;
+    border: 1px solid $border;
+    border-radius: $radius-md;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+
+    &:hover {
+      border-color: $border2;
+      background: $surface2;
+    }
+
+    .qa-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: $radius-sm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qa-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: $text1;
+    }
+
+    .qa-desc {
+      font-size: 11px;
+      color: $text3;
+      line-height: 1.4;
+    }
+  }
+}
+
+// ── Modal overlay ────────────────────────────────────────────────
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 1rem;
+
+  .modal {
+    background: $surface;
+    border: 1px solid $border2;
+    border-radius: $radius-lg;
+    width: 100%;
+    max-width: 500px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      h2 {
+        font-family: "Syne", sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: $text1;
+      }
+
+      .modal-close {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        background: $surface2;
+        border: 1px solid $border;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $text2;
+
+        &:hover { color: $text1; background: $surface3; }
+      }
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      label {
+        font-size: 12px;
+        font-weight: 500;
+        color: $text2;
+      }
+
+      input, select, textarea {
+        background: $surface2;
+        border: 1px solid $border;
+        border-radius: $radius-sm;
+        color: $text1;
+        font-size: 14px;
+        font-family: "DM Sans", sans-serif;
+        padding: 0.65rem 0.9rem;
+        outline: none;
+        width: 100%;
+        transition: border-color 0.2s ease;
+
+        &::placeholder { color: $text3; }
+        &:focus { border-color: $brand; }
+      }
+
+      textarea { resize: vertical; min-height: 80px; }
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 0.25rem;
+
+      .btn-cancel {
+        padding: 0.65rem 1.25rem;
+        background: $surface2;
+        border: 1px solid $border;
+        border-radius: $radius-sm;
+        color: $text2;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        font-family: "DM Sans", sans-serif;
+        &:hover { color: $text1; }
+      }
+
+      .btn-confirm {
+        padding: 0.65rem 1.25rem;
+        background: $brand;
+        border: none;
+        border-radius: $radius-sm;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        font-family: "DM Sans", sans-serif;
+        &:hover { background: $brand-dark; }
+      }
+    }
+  }
+}
+
+// ── Responsive ───────────────────────────────────────────────────
+@media (max-width: 900px) {
+  .two-col { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    &.open { transform: translateX(0); }
+  }
+
+  .main-content { margin-left: 0; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+}

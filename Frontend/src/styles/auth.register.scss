@@ -1,0 +1,752 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Geist:wght@300;400;500;600&display=swap");
+
+// ── Tokens (shared with auth.login.scss) ──────────────────────────────────
+$hb-bg:           #06060a;
+$hb-bg-left:      #0d0d18;
+$hb-surface:      rgba(255, 255, 255, 0.03);
+$hb-surface2:     rgba(255, 255, 255, 0.05);
+$hb-surface3:     rgba(255, 255, 255, 0.07);
+
+$hb-brand:        #6366f1;
+$hb-brand-light:  rgba(99, 102, 241, 0.1);
+$hb-brand-glow:   rgba(99, 102, 241, 0.35);
+$hb-violet:       #8b5cf6;
+$hb-emerald:      #10d9a0;
+
+$hb-border:       rgba(255, 255, 255, 0.08);
+$hb-border2:      rgba(255, 255, 255, 0.18);
+
+$hb-text1:        #f0f0f8;
+$hb-text2:        #9898b8;
+$hb-text3:        #5a5a72;
+$hb-text4:        #44445a;
+$hb-text5:        #33334a;
+
+$hb-error:        #fb7185;
+$hb-error-dim:    rgba(251, 113, 133, 0.08);
+$hb-error-border: rgba(251, 113, 133, 0.2);
+
+$hb-font-display: "Bricolage Grotesque", sans-serif;
+$hb-font-body:    "Geist", sans-serif;
+
+// ── Keyframes ──────────────────────────────────────────────────────────────
+@keyframes hb-slide-down {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hb-slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hb-fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hb-spin {
+  to { transform: rotate(360deg); }
+}
+
+// ── Root layout ────────────────────────────────────────────────────────────
+.hb-reg-root {
+  min-height: 100vh;
+  display: flex;
+  background: $hb-bg;
+  font-family: $hb-font-body;
+  color: $hb-text1;
+}
+
+// ── Loading state ──────────────────────────────────────────────────────────
+.hb-reg-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 100vh;
+  width: 100%;
+
+  p {
+    font-size: 13px;
+    color: $hb-text4;
+    font-family: $hb-font-body;
+  }
+}
+
+.hb-reg-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(99, 102, 241, 0.2);
+  border-top-color: $hb-brand;
+  border-radius: 50%;
+  animation: hb-spin 0.75s linear infinite;
+}
+
+// ── Shared brand mark ──────────────────────────────────────────────────────
+.hb-reg-logo-mark {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, $hb-brand, $hb-violet);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $hb-font-display;
+  font-weight: 800;
+  font-size: 17px;
+  color: #fff;
+  box-shadow: 0 0 24px $hb-brand-glow, inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.hb-reg-brand-name {
+  font-family: $hb-font-display;
+  font-weight: 800;
+  font-size: 20px;
+  color: $hb-text1;
+  letter-spacing: -0.4px;
+}
+
+// ── Left panel ─────────────────────────────────────────────────────────────
+.hb-reg-left {
+  width: 46%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 3rem;
+  overflow: hidden;
+  background: $hb-bg-left;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 55% at 15% 15%,  rgba(99, 102, 241, 0.16) 0%, transparent 60%),
+      radial-gradient(ellipse 55% 45% at 85% 75%,  rgba(139, 92, 246, 0.12) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 35% at 55% 45%,  rgba(16, 217, 160, 0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+}
+
+.hb-reg-left-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.hb-reg-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: hb-slide-down 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+// ── Left hero ──────────────────────────────────────────────────────────────
+.hb-reg-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem 0;
+}
+
+.hb-reg-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: $hb-emerald;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  animation: hb-slide-up 0.6s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: $hb-emerald;
+    border-radius: 1px;
+  }
+}
+
+.hb-reg-headline {
+  font-family: $hb-font-display;
+  font-size: clamp(1.85rem, 3.2vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -1px;
+  color: $hb-text1;
+  animation: hb-slide-up 0.6s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  em {
+    font-style: normal;
+    background: linear-gradient(135deg, $hb-brand 0%, #a78bfa 50%, $hb-emerald 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.hb-reg-desc {
+  font-size: 14px;
+  color: #6b6b88;
+  line-height: 1.75;
+  max-width: 340px;
+  animation: hb-slide-up 0.6s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+// ── Step list ──────────────────────────────────────────────────────────────
+.hb-reg-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: hb-slide-up 0.6s 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hb-reg-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  animation: hb-slide-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hb-reg-step-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: $hb-brand-light;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: #a5b4fc;
+  font-family: $hb-font-display;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.hb-reg-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hb-reg-step-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: $hb-text1;
+}
+
+.hb-reg-step-desc {
+  font-size: 12px;
+  color: $hb-text4;
+  line-height: 1.5;
+}
+
+// ── Testimonial ────────────────────────────────────────────────────────────
+.hb-reg-testimonial {
+  padding: 1.1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  animation: hb-slide-up 0.6s 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hb-reg-quote {
+  font-size: 13px;
+  color: $hb-text2;
+  line-height: 1.65;
+  margin-bottom: 10px;
+  font-style: italic;
+
+  &::before { content: '"'; color: $hb-brand; font-size: 16px; font-style: normal; }
+  &::after  { content: '"'; color: $hb-brand; font-size: 16px; font-style: normal; }
+}
+
+.hb-reg-author {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.hb-reg-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $hb-brand, $hb-violet);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.hb-reg-author-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.hb-reg-author-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: $hb-text1;
+}
+
+.hb-reg-author-role {
+  font-size: 10.5px;
+  color: $hb-text4;
+}
+
+// ── Right panel ────────────────────────────────────────────────────────────
+.hb-reg-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  background: $hb-bg;
+  overflow-y: auto;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+}
+
+// ── Form card ──────────────────────────────────────────────────────────────
+.hb-reg-card {
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+  z-index: 1;
+  padding: 1rem 0;
+  animation: hb-fade-up 0.7s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hb-reg-card-logo {
+  display: none;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 1.75rem;
+}
+
+.hb-reg-card-header {
+  margin-bottom: 1.75rem;
+}
+
+.hb-reg-card-title {
+  font-family: $hb-font-display;
+  font-size: 26px;
+  font-weight: 800;
+  color: $hb-text1;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.hb-reg-card-sub {
+  font-size: 14px;
+  color: $hb-text3;
+  line-height: 1.5;
+}
+
+// ── Role selector ──────────────────────────────────────────────────────────
+.hb-reg-roles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.hb-reg-role {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 12px;
+  background: $hb-surface;
+  border: 1.5px solid $hb-border;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.06), transparent);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &:hover {
+    border-color: rgba(99, 102, 241, 0.3);
+    background: $hb-surface2;
+    transform: translateY(-1px);
+
+    &::before { opacity: 1; }
+  }
+
+  &.active {
+    border-color: rgba(99, 102, 241, 0.5);
+    background: $hb-brand-light;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08), 0 4px 16px rgba(99, 102, 241, 0.12);
+
+    &::before { opacity: 1; }
+
+    .hb-reg-role-label { color: #a5b4fc; }
+    .hb-reg-role-check { opacity: 1; transform: scale(1); }
+  }
+}
+
+.hb-reg-role-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.hb-reg-role-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: $hb-text2;
+  transition: color 0.2s ease;
+}
+
+.hb-reg-role-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 16px;
+  height: 16px;
+  background: $hb-brand;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+
+  &::after {
+    content: "✓";
+    font-size: 9px;
+    color: #fff;
+    font-weight: 700;
+  }
+}
+
+// ── Google button ──────────────────────────────────────────────────────────
+.hb-reg-btn-google {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  background: $hb-surface;
+  border: 1px solid $hb-border;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #c8c8e0;
+  cursor: pointer;
+  font-family: $hb-font-body;
+  transition: all 0.2s ease;
+  margin-bottom: 1.25rem;
+
+  &:hover {
+    background: $hb-surface2;
+    border-color: $hb-border2;
+    color: $hb-text1;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+// ── Divider ────────────────────────────────────────────────────────────────
+.hb-reg-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.25rem;
+  font-size: 12px;
+  color: $hb-text5;
+  font-weight: 500;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+// ── Form fields ────────────────────────────────────────────────────────────
+.hb-reg-field {
+  margin-bottom: 1rem;
+}
+
+.hb-reg-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #7070a0;
+  margin-bottom: 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.hb-reg-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &:focus-within .hb-reg-input-icon {
+    color: $hb-brand;
+  }
+}
+
+.hb-reg-input-icon {
+  position: absolute;
+  left: 13px;
+  width: 16px;
+  height: 16px;
+  color: $hb-text4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: color 0.2s ease;
+
+  svg { width: 100%; height: 100%; }
+}
+
+.hb-reg-input {
+  width: 100%;
+  background: $hb-surface;
+  border: 1px solid $hb-border;
+  border-radius: 12px;
+  color: $hb-text1;
+  font-size: 14px;
+  font-family: $hb-font-body;
+  padding: 12px 14px 12px 40px;
+  outline: none;
+  transition: all 0.2s ease;
+
+  &::placeholder { color: $hb-text5; }
+
+  &:focus {
+    background: rgba(99, 102, 241, 0.05);
+    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  }
+
+  &.has-action { padding-right: 42px; }
+}
+
+.hb-reg-eye-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $hb-text4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+
+  svg { width: 15px; height: 15px; }
+
+  &:hover {
+    color: #a0a0c0;
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+// ── Password strength ──────────────────────────────────────────────────────
+.hb-reg-strength {
+  margin-top: 8px;
+}
+
+.hb-reg-strength-bars {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 5px;
+}
+
+.hb-reg-strength-bar {
+  flex: 1;
+  height: 3px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.07);
+  transition: background 0.3s ease;
+
+  &.filled-1 { background: #ef4444; }
+  &.filled-2 { background: #f97316; }
+  &.filled-3 { background: #eab308; }
+  &.filled-4 { background: #22c55e; }
+}
+
+.hb-reg-strength-label {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+// ── Error ──────────────────────────────────────────────────────────────────
+.hb-reg-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: $hb-error-dim;
+  border: 1px solid $hb-error-border;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #fca5a5;
+  margin-bottom: 1rem;
+
+  &::before {
+    content: "⚠";
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+}
+
+// ── Submit button ──────────────────────────────────────────────────────────
+.hb-reg-btn-submit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px;
+  background: linear-gradient(135deg, $hb-brand 0%, $hb-violet 100%);
+  border: none;
+  border-radius: 12px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  font-family: $hb-font-body;
+  letter-spacing: -0.1px;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px rgba(99, 102, 241, 0.5);
+    &::before { left: 100%; }
+  }
+
+  &:active { transform: scale(0.99) translateY(0); }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+// ── Terms ──────────────────────────────────────────────────────────────────
+.hb-reg-terms {
+  font-size: 11.5px;
+  color: $hb-text4;
+  text-align: center;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+
+  a {
+    color: $hb-text3;
+    text-decoration: none;
+    transition: color 0.15s ease;
+    &:hover { color: $hb-text2; }
+  }
+}
+
+// ── Footer ─────────────────────────────────────────────────────────────────
+.hb-reg-footer {
+  text-align: center;
+  font-size: 13.5px;
+  color: $hb-text4;
+
+  a {
+    color: $hb-brand;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.15s ease;
+    &:hover { color: #a5b4fc; }
+  }
+}
+
+// ── Responsive ─────────────────────────────────────────────────────────────
+@media (max-width: 900px) {
+  .hb-reg-left { display: none; }
+
+  .hb-reg-right {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(99, 102, 241, 0.1) 0%, transparent 60%),
+      #06060a;
+    align-items: flex-start;
+    padding: 2.5rem 1.5rem;
+  }
+
+  .hb-reg-card-logo { display: flex; }
+  .hb-reg-card { max-width: 400px; margin: 0 auto; }
+}
+
+@media (max-width: 480px) {
+  .hb-reg-right { padding: 1.5rem 1.25rem; }
+  .hb-reg-roles { grid-template-columns: 1fr 1fr; }
+}

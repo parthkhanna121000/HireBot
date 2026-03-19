@@ -1,0 +1,124 @@
+// ── Button tokens ───────────────────────────────────────────────
+$brand:       #185FA5;
+$brand-dark:  #0C447C;
+$accent:      #e1034d;
+$accent-dark: #b8023f;
+$surface2:    #2a2a2a;
+$border:      rgba(255, 255, 255, 0.1);
+$text1:       #f5f5f5;
+$text2:       #9ca3af;
+
+// ── Base ────────────────────────────────────────────────────────
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border: none;
+  outline: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease,
+    opacity 0.2s ease;
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  // ── Variants ────────────────────────────────────────────────
+
+  &.primary-button {
+    background: $brand;
+    color: #fff;
+    border: 1px solid transparent;
+
+    &:hover  { background: $brand-dark; }
+    &:active { transform: scale(0.97); }
+  }
+
+  &.accent-button {
+    background: $accent;
+    color: #fff;
+    border: 1px solid transparent;
+
+    &:hover  { background: $accent-dark; }
+  }
+
+  &.secondary-button {
+    background: $surface2;
+    color: $text1;
+    border: 1px solid $border;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+  }
+
+  &.ghost-button {
+    background: transparent;
+    color: $text2;
+    border: 1px solid transparent;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: $text1;
+    }
+  }
+
+  &.outline-button {
+    background: transparent;
+    color: $brand;
+    border: 1px solid $brand;
+
+    &:hover {
+      background: rgba(24, 95, 165, 0.1);
+    }
+  }
+
+  // ── Sizes ────────────────────────────────────────────────────
+
+  &.btn-sm {
+    padding: 0.45rem 1rem;
+    font-size: 12px;
+    border-radius: 8px;
+  }
+
+  &.btn-lg {
+    padding: 0.85rem 2rem;
+    font-size: 15px;
+    border-radius: 12px;
+  }
+
+  &.btn-full {
+    width: 100%;
+  }
+
+  // ── Icon-only ────────────────────────────────────────────────
+
+  &.btn-icon {
+    padding: 0.6rem;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+  }
+}

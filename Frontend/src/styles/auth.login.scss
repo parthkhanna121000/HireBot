@@ -1,0 +1,629 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Geist:wght@300;400;500;600&display=swap");
+
+// ── Tokens ─────────────────────────────────────────────────────────────────
+$hb-bg:           #06060a;
+$hb-bg-left:      #0d0d18;
+$hb-surface:      rgba(255, 255, 255, 0.03);
+$hb-surface2:     rgba(255, 255, 255, 0.05);
+
+$hb-brand:        #6366f1;
+$hb-brand-light:  rgba(99, 102, 241, 0.1);
+$hb-brand-glow:   rgba(99, 102, 241, 0.35);
+$hb-violet:       #8b5cf6;
+$hb-emerald:      #10d9a0;
+
+$hb-border:       rgba(255, 255, 255, 0.08);
+$hb-border2:      rgba(255, 255, 255, 0.18);
+
+$hb-text1:        #f0f0f8;
+$hb-text2:        #9898b8;
+$hb-text3:        #5a5a72;
+$hb-text4:        #44445a;
+$hb-text5:        #33334a;
+
+$hb-error:        #fb7185;
+$hb-error-dim:    rgba(251, 113, 133, 0.08);
+$hb-error-border: rgba(251, 113, 133, 0.2);
+
+$hb-font-display: "Bricolage Grotesque", sans-serif;
+$hb-font-body:    "Geist", sans-serif;
+
+// ── Keyframes ──────────────────────────────────────────────────────────────
+@keyframes hb-slide-down {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hb-slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hb-fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hb-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes hb-shimmer {
+  from { left: -100%; }
+  to   { left: 100%; }
+}
+
+// ── Root layout ────────────────────────────────────────────────────────────
+.hb-root {
+  min-height: 100vh;
+  display: flex;
+  background: $hb-bg;
+  font-family: $hb-font-body;
+  color: $hb-text1;
+}
+
+// ── Loading state ──────────────────────────────────────────────────────────
+.hb-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 100vh;
+  width: 100%;
+
+  p {
+    font-size: 13px;
+    color: $hb-text4;
+    font-family: $hb-font-body;
+  }
+}
+
+.hb-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(99, 102, 241, 0.2);
+  border-top-color: $hb-brand;
+  border-radius: 50%;
+  animation: hb-spin 0.75s linear infinite;
+}
+
+// ── Shared brand elements ──────────────────────────────────────────────────
+.hb-logo-mark {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, $hb-brand, $hb-violet);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $hb-font-display;
+  font-weight: 800;
+  font-size: 17px;
+  color: #fff;
+  box-shadow: 0 0 24px $hb-brand-glow, inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.hb-brand-name {
+  font-family: $hb-font-display;
+  font-weight: 800;
+  font-size: 20px;
+  color: $hb-text1;
+  letter-spacing: -0.4px;
+}
+
+// ── Left panel ─────────────────────────────────────────────────────────────
+.hb-left {
+  width: 46%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3rem;
+  overflow: hidden;
+  background: $hb-bg-left;
+
+  // Mesh gradient
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%,  rgba(99, 102, 241, 0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 80%,  rgba(139, 92, 246, 0.12) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 40% at 50% 50%,  rgba(16, 217, 160, 0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  // Grid texture
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+}
+
+.hb-left-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.hb-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: hb-slide-down 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+// ── Hero section ───────────────────────────────────────────────────────────
+.hb-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem 0;
+}
+
+.hb-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: $hb-emerald;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  animation: hb-slide-up 0.6s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: $hb-emerald;
+    border-radius: 1px;
+  }
+}
+
+.hb-headline {
+  font-family: $hb-font-display;
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -1px;
+  color: $hb-text1;
+  animation: hb-slide-up 0.6s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  em {
+    font-style: normal;
+    background: linear-gradient(135deg, $hb-brand 0%, #a78bfa 50%, $hb-emerald 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.hb-desc {
+  font-size: 14.5px;
+  color: #6b6b88;
+  line-height: 1.7;
+  max-width: 340px;
+  animation: hb-slide-up 0.6s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+// ── Feature pills ──────────────────────────────────────────────────────────
+.hb-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: hb-slide-up 0.6s 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hb-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  font-size: 13px;
+  color: $hb-text2;
+  width: fit-content;
+  transition: all 0.2s ease;
+  animation: hb-slide-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  &:hover {
+    background: rgba(99, 102, 241, 0.08);
+    border-color: rgba(99, 102, 241, 0.2);
+    color: #c4c4e0;
+  }
+}
+
+.hb-pill-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+// ── Stats ──────────────────────────────────────────────────────────────────
+.hb-stats {
+  display: flex;
+  gap: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  animation: hb-slide-up 0.6s 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hb-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  animation: hb-slide-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hb-stat-value {
+  font-family: $hb-font-display;
+  font-size: 22px;
+  font-weight: 800;
+  color: $hb-text1;
+  letter-spacing: -0.5px;
+}
+
+.hb-stat-label {
+  font-size: 11px;
+  color: $hb-text4;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+// ── Right panel ────────────────────────────────────────────────────────────
+.hb-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  background: $hb-bg;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+}
+
+// ── Form card ──────────────────────────────────────────────────────────────
+.hb-card {
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  z-index: 1;
+  animation: hb-fade-up 0.7s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hb-card-logo {
+  display: none;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 1.75rem;
+}
+
+.hb-card-header {
+  margin-bottom: 2.25rem;
+}
+
+.hb-card-title {
+  font-family: $hb-font-display;
+  font-size: 26px;
+  font-weight: 800;
+  color: $hb-text1;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.hb-card-sub {
+  font-size: 14px;
+  color: $hb-text3;
+  line-height: 1.5;
+}
+
+// ── Google button ──────────────────────────────────────────────────────────
+.hb-btn-google {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  background: $hb-surface;
+  border: 1px solid $hb-border;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #c8c8e0;
+  cursor: pointer;
+  font-family: $hb-font-body;
+  transition: all 0.2s ease;
+  margin-bottom: 1.5rem;
+
+  &:hover {
+    background: $hb-surface2;
+    border-color: $hb-border2;
+    color: $hb-text1;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+// ── Divider ────────────────────────────────────────────────────────────────
+.hb-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+  font-size: 12px;
+  color: $hb-text5;
+  font-weight: 500;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+// ── Form fields ────────────────────────────────────────────────────────────
+.hb-field {
+  margin-bottom: 1.1rem;
+}
+
+.hb-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #7070a0;
+  margin-bottom: 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.hb-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &:focus-within .hb-input-icon {
+    color: $hb-brand;
+  }
+}
+
+.hb-input-icon {
+  position: absolute;
+  left: 13px;
+  width: 16px;
+  height: 16px;
+  color: $hb-text4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: color 0.2s ease;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.hb-input {
+  width: 100%;
+  background: $hb-surface;
+  border: 1px solid $hb-border;
+  border-radius: 12px;
+  color: $hb-text1;
+  font-size: 14px;
+  font-family: $hb-font-body;
+  padding: 12px 14px 12px 40px;
+  outline: none;
+  transition: all 0.2s ease;
+
+  &::placeholder {
+    color: $hb-text5;
+  }
+
+  &:focus {
+    background: rgba(99, 102, 241, 0.05);
+    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  }
+
+  &.has-action {
+    padding-right: 42px;
+  }
+}
+
+.hb-eye-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $hb-text4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover {
+    color: #a0a0c0;
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+// ── Forgot row ─────────────────────────────────────────────────────────────
+.hb-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.25rem;
+  margin-top: -4px;
+}
+
+.hb-link {
+  font-size: 12.5px;
+  color: $hb-brand;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: #a5b4fc;
+  }
+}
+
+// ── Error ──────────────────────────────────────────────────────────────────
+.hb-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: $hb-error-dim;
+  border: 1px solid $hb-error-border;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #fca5a5;
+  margin-bottom: 1rem;
+
+  &::before {
+    content: "⚠";
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+}
+
+// ── Submit button ──────────────────────────────────────────────────────────
+.hb-btn-submit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px;
+  background: linear-gradient(135deg, $hb-brand 0%, $hb-violet 100%);
+  border: none;
+  border-radius: 12px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  font-family: $hb-font-body;
+  letter-spacing: -0.1px;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px rgba(99, 102, 241, 0.5);
+
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:active {
+    transform: scale(0.99) translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+// ── Footer ─────────────────────────────────────────────────────────────────
+.hb-footer {
+  text-align: center;
+  font-size: 13.5px;
+  color: $hb-text4;
+
+  a {
+    color: $hb-brand;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: #a5b4fc;
+    }
+  }
+}
+
+// ── Responsive ─────────────────────────────────────────────────────────────
+@media (max-width: 900px) {
+  .hb-left {
+    display: none;
+  }
+
+  .hb-right {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(99, 102, 241, 0.1) 0%, transparent 60%),
+      #06060a;
+  }
+
+  .hb-card-logo {
+    display: flex;
+  }
+
+  .hb-card {
+    max-width: 380px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hb-right {
+    padding: 1.5rem 1.25rem;
+  }
+}
