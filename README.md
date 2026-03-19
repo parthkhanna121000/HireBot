@@ -2,6 +2,10 @@
 
 <div align="center">
 
+### 🏠 Landing Page
+
+![Landing Page](./assets/landing.png)
+
 ![HireBot Banner](https://img.shields.io/badge/HireBot-AI%20Resume%20Screening-185FA5?style=for-the-badge&logo=robot&logoColor=white)
 
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org)
@@ -19,6 +23,16 @@ _Upload your resume → Get AI Score → Fix gaps → Apply smarter_
 </div>
 
 ---
+
+## 📸 Screenshots
+
+<div align="center">
+ 
+### 🏠 Landing Page
+![Landing Page](./assets/landing.png)
+
+
+</div>
 
 ## 📌 What is HireBot?
 
