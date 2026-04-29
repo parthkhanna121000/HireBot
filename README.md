@@ -522,6 +522,8 @@ The order of middleware in `app.js` is security-critical. Incorrect ordering cau
 ## 👨‍💻 Author
 
 **Parth Khanna** — B.Tech Computer Science Engineering, Final Semester
+**Aman Maurya** — B.Tech Computer Science Engineering, Final Semester
+**Laksh Gupta** — B.Tech Computer Science Engineering, Final Semester
 
 - GitHub: [parthkhanna121000](https://github.com/parthkhanna121000)
 - LinkedIn: [parth-khanna-17a380278](https://www.linkedin.com/in/parth-khanna-17a380278/)
