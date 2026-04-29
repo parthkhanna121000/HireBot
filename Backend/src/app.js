@@ -7,7 +7,19 @@ const app = express();
 // ── CORS must be FIRST — before every route including payments ────────────────
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: function (origin, callback) {
+      const allowedOrigins = ["http://localhost:5173", process.env.CLIENT_URL];
+      // Allow any vercel.app preview URL
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        /https:\/\/hire-.*\.vercel\.app$/.test(origin)
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
