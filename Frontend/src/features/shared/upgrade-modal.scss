@@ -1,0 +1,182 @@
+// upgrade-modal.scss
+
+.upgrade-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fade-in 0.15s ease both;
+}
+
+.upgrade-modal {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 20px;
+  padding: 40px 36px 32px;
+  text-align: center;
+  animation: modal-up 0.2s ease both;
+
+  &__close {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    width: 28px;
+    height: 28px;
+    background: #1e1e1e;
+    border: 1px solid #2a2a2a;
+    border-radius: 50%;
+    color: #666;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+
+    &:hover { background: #2a2a2a; color: #e0e0e0; }
+  }
+
+  &__icon {
+    font-size: 40px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  &__title {
+    margin: 0 0 10px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+
+  &__subtitle {
+    margin: 0 0 28px;
+    font-size: 14px;
+    color: #888;
+    line-height: 1.5;
+
+    strong { color: #e0e0e0; }
+  }
+
+  &__compare {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  &__perks {
+    list-style: none;
+    margin: 0 0 28px;
+    padding: 0;
+    text-align: left;
+
+    li {
+      padding: 7px 0;
+      font-size: 13px;
+      color: #aaa;
+      border-bottom: 1px solid #1a1a1a;
+
+      &:last-child { border-bottom: none; }
+    }
+  }
+
+  &__cta {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: opacity 0.15s, transform 0.1s;
+
+    &:hover { opacity: 0.9; transform: translateY(-1px); }
+    &:active { transform: translateY(0); }
+  }
+
+  &__dismiss {
+    background: none;
+    border: none;
+    color: #555;
+    font-size: 13px;
+    cursor: pointer;
+    transition: color 0.15s;
+
+    &:hover { color: #888; }
+  }
+}
+
+// ─── PLAN COMPARE COLUMNS ────────────────────────────────────────────────────
+.plan-col {
+  flex: 1;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+
+  &--pro {
+    border-color: rgba(124, 58, 237, 0.4);
+    background: rgba(124, 58, 237, 0.06);
+  }
+
+  &__label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #555;
+    margin-bottom: 10px;
+
+    .plan-col--pro & { color: #a78bfa; }
+  }
+
+  &__feature {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 8px;
+  }
+
+  &__value {
+    font-size: 15px;
+    font-weight: 700;
+
+    &--limited  { color: #f87171; }
+    &--unlimited { color: #4ade80; }
+  }
+
+  &__arrow {
+    font-size: 18px;
+    color: #444;
+    flex-shrink: 0;
+  }
+}
+
+// ─── ANIMATIONS ──────────────────────────────────────────────────────────────
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes modal-up {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}

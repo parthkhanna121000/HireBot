@@ -1,0 +1,768 @@
+// admin.scss — HireBot Admin Dashboard
+// Matches HireBot v2.0 dark design system (Cabinet Grotesk, indigo/violet palette)
+
+@import url("https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+// ── Design tokens (mirrors landing.scss) ──────────────────────────────────────
+$c-void:       #030308;
+$c-deep:       #07070f;
+$c-surface:    #0e0e1a;
+$c-surface2:   #141422;
+$c-surface3:   #1a1a2e;
+$c-surface4:   #20203a;
+
+$c-indigo:     #4f46e5;
+$c-indigo2:    #6366f1;
+$c-violet:     #7c3aed;
+$c-emerald:    #10b981;
+$c-amber:      #f59e0b;
+$c-rose:       #f43f5e;
+
+$c-border:     rgba(255,255,255,0.055);
+$c-border2:    rgba(255,255,255,0.10);
+
+$c-text1:      #f4f4ff;
+$c-text2:      #8888b0;
+$c-text3:      #44445a;
+
+$font-display: "Cabinet Grotesk", sans-serif;
+$font-mono:    "JetBrains Mono", monospace;
+
+// ── Root ──────────────────────────────────────────────────────────────────────
+.admin-dashboard {
+  background: $c-void;
+  min-height: 100vh;
+  font-family: $font-display;
+  color: $c-text1;
+
+  // subtle noise overlay
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.45;
+  }
+
+  > * { position: relative; z-index: 1; }
+}
+
+// ── Top bar ───────────────────────────────────────────────────────────────────
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  background: rgba(3,3,8,0.8);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid $c-border;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -1px; left: 50%;
+    transform: translateX(-50%);
+    width: 60%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(99,102,241,0.4), transparent);
+  }
+}
+
+.admin-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.admin-logo-mark {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, $c-indigo, $c-violet);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 16px; color: #fff;
+  box-shadow: 0 0 20px rgba(79,70,229,0.4);
+  flex-shrink: 0;
+}
+
+.admin-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: $c-text1;
+  letter-spacing: -0.3px;
+  margin: 0;
+  line-height: 1;
+}
+
+.admin-subtitle {
+  font-size: 11px;
+  color: $c-text3;
+  margin: 2px 0 0;
+  font-family: $font-mono;
+}
+
+.admin-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-live-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #10b981;
+  background: rgba(16,185,129,0.12);
+  border: 1px solid rgba(16,185,129,0.25);
+  border-radius: 20px;
+  padding: 4px 12px;
+  letter-spacing: 0.02em;
+}
+
+.admin-refresh-btn {
+  padding: 7px 16px;
+  background: $c-surface2;
+  color: $c-text1;
+  border: 1px solid $c-border2;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: $font-display;
+  cursor: pointer;
+  transition: all 0.18s ease;
+
+  &:hover {
+    background: $c-surface3;
+    border-color: rgba(255,255,255,0.15);
+  }
+}
+
+// ── Nav tabs ──────────────────────────────────────────────────────────────────
+.admin-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 0 28px;
+  background: rgba(3,3,8,0.6);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid $c-border;
+}
+
+.admin-tab {
+  position: relative;
+  padding: 13px 20px;
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: $font-display;
+  color: $c-text2;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.18s ease;
+  letter-spacing: -0.1px;
+
+  &:hover { color: $c-text1; }
+
+  &.active {
+    color: $c-text1;
+  }
+}
+
+.admin-tab-indicator {
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, $c-indigo, $c-violet);
+  border-radius: 2px 2px 0 0;
+}
+
+// ── Loading / error ───────────────────────────────────────────────────────────
+.admin-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 6rem 2rem;
+  color: $c-text2;
+  font-size: 13px;
+}
+
+.admin-spinner {
+  width: 32px; height: 32px;
+  border: 2px solid $c-border2;
+  border-top-color: $c-indigo2;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.admin-error {
+  margin: 2rem 28px;
+  padding: 16px 20px;
+  background: rgba(244,63,94,0.1);
+  border: 1px solid rgba(244,63,94,0.25);
+  border-radius: 12px;
+  color: #fb7185;
+  font-size: 13px;
+}
+
+.admin-empty {
+  color: $c-text3;
+  font-size: 13px;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+// ── Content wrapper ───────────────────────────────────────────────────────────
+.admin-content {
+  padding: 24px 28px 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// ── Metric cards ──────────────────────────────────────────────────────────────
+.admin-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+
+  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 540px) { grid-template-columns: 1fr; }
+}
+
+.admin-metric-card {
+  background: $c-surface;
+  border: 1px solid $c-border;
+  border-radius: 16px;
+  padding: 18px 20px 14px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    border-radius: 16px 16px 0 0;
+  }
+
+  &:hover {
+    border-color: $c-border2;
+  }
+}
+
+.amc-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.amc-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: $c-text2;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.amc-icon {
+  font-size: 14px;
+  opacity: 0.4;
+}
+
+.amc-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: $c-text1;
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 6px;
+  font-family: $font-mono;
+}
+
+.amc-trend {
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 12px;
+
+  &.up   { color: #10b981; }
+  &.down { color: #f43f5e; }
+}
+
+.amc-bar-track {
+  height: 3px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.amc-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  opacity: 0.6;
+}
+
+// ── Chart cards ───────────────────────────────────────────────────────────────
+.admin-charts-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+
+  @media (max-width: 800px) { grid-template-columns: 1fr; }
+}
+
+.admin-chart-card {
+  background: $c-surface;
+  border: 1px solid $c-border;
+  border-radius: 16px;
+  padding: 20px;
+  transition: border-color 0.2s;
+
+  &--wide { /* default */ }
+
+  &:hover { border-color: $c-border2; }
+}
+
+// ── Section headers ───────────────────────────────────────────────────────────
+.admin-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.admin-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $c-indigo2;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 14px; height: 2px;
+    background: $c-indigo2;
+    border-radius: 1px;
+  }
+}
+
+.admin-section-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: $c-text1;
+  letter-spacing: -0.3px;
+  margin: 0;
+}
+
+// ── Custom tooltip ────────────────────────────────────────────────────────────
+.admin-tooltip {
+  background: $c-surface2;
+  border: 1px solid $c-border2;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 12px;
+}
+
+.admin-tooltip-label {
+  color: $c-text2;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.admin-tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: $c-text1;
+  font-weight: 600;
+  font-family: $font-mono;
+}
+
+// ── Chart legend ──────────────────────────────────────────────────────────────
+.admin-chart-legend {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: $c-text2;
+    font-weight: 600;
+  }
+}
+
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+// ── Pie legend ────────────────────────────────────────────────────────────────
+.admin-pie-legend {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.admin-pie-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .apl-label {
+    font-size: 12px;
+    color: $c-text2;
+    flex: 1;
+  }
+
+  .apl-val {
+    font-size: 12px;
+    font-weight: 700;
+    color: $c-text1;
+    font-family: $font-mono;
+  }
+}
+
+// ── Feature usage rows ────────────────────────────────────────────────────────
+.admin-feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.admin-feature-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid $c-border;
+
+  &:last-child { border-bottom: none; }
+}
+
+.admin-feature-name {
+  font-size: 13px;
+  color: $c-text1;
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.admin-feature-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.admin-feature-bar {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.admin-feature-count {
+  font-size: 12px;
+  font-weight: 700;
+  color: $c-text1;
+  font-family: $font-mono;
+  width: 48px;
+  text-align: right;
+}
+
+.admin-feature-pct {
+  font-size: 11px;
+  color: $c-text3;
+  font-family: $font-mono;
+  width: 36px;
+  text-align: right;
+}
+
+// ── Onboarding funnel ─────────────────────────────────────────────────────────
+.admin-funnel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-funnel-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.afr-index {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-family: $font-mono;
+}
+
+.afr-content {
+  flex: 1;
+}
+
+.afr-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.afr-label {
+  font-size: 13px;
+  color: $c-text1;
+  font-weight: 600;
+}
+
+.afr-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.afr-dropoff {
+  font-size: 11px;
+  color: $c-rose;
+  font-family: $font-mono;
+  font-weight: 600;
+}
+
+.afr-pct {
+  font-size: 13px;
+  font-weight: 800;
+  font-family: $font-mono;
+}
+
+.afr-track {
+  height: 6px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.afr-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.afr-count {
+  font-size: 11px;
+  color: $c-text3;
+  font-family: $font-mono;
+}
+
+// ── Pipeline bars ─────────────────────────────────────────────────────────────
+.admin-pipeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  height: 200px;
+  align-items: flex-end;
+  margin: 1rem 0 0.5rem;
+}
+
+.admin-pipeline-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.aps-bar-wrap {
+  width: 100%;
+  height: 140px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.aps-bar {
+  width: 100%;
+  border-radius: 8px 8px 0 0;
+  min-height: 4px;
+}
+
+.aps-count {
+  font-size: 18px;
+  font-weight: 800;
+  font-family: $font-mono;
+  letter-spacing: -0.5px;
+  margin-top: 10px;
+}
+
+.aps-label {
+  font-size: 12px;
+  color: $c-text2;
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.aps-pct {
+  font-size: 11px;
+  color: $c-text3;
+  font-family: $font-mono;
+  margin-top: 1px;
+}
+
+// ── Jobs overview ─────────────────────────────────────────────────────────────
+.admin-jobs-overview {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 1rem 0;
+}
+
+.ajo-stat {
+  flex: 1;
+  text-align: center;
+}
+
+.ajo-val {
+  font-size: 32px;
+  font-weight: 800;
+  color: $c-text1;
+  letter-spacing: -1px;
+  font-family: $font-mono;
+}
+
+.ajo-label {
+  font-size: 11px;
+  color: $c-text3;
+  margin-top: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ajo-divider {
+  width: 1px;
+  height: 48px;
+  background: $c-border;
+}
+
+// ── Upgrade rows ──────────────────────────────────────────────────────────────
+.admin-upgrades-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.admin-upgrade-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid $c-border;
+  transition: background 0.15s;
+
+  &:last-child { border-bottom: none; }
+
+  &:hover { background: rgba(255,255,255,0.015); }
+}
+
+.aur-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  flex-shrink: 0;
+}
+
+.aur-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.aur-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: $c-text1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.aur-email {
+  font-size: 11px;
+  color: $c-text3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.aur-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.aur-plan {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 10px;
+  letter-spacing: 0.02em;
+  display: inline-block;
+  margin-bottom: 3px;
+
+  &.monthly {
+    background: rgba(99,102,241,0.15);
+    color: #a5b4fc;
+    border: 1px solid rgba(99,102,241,0.25);
+  }
+
+  &.annual {
+    background: rgba(245,158,11,0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(245,158,11,0.25);
+  }
+}
+
+.aur-since {
+  font-size: 10px;
+  color: $c-text3;
+  font-family: $font-mono;
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+@media (max-width: 700px) {
+  .admin-content { padding: 16px 16px 32px; }
+  .admin-topbar  { padding: 12px 16px; }
+  .admin-tabs    { padding: 0 16px; overflow-x: auto; }
+  .admin-tab     { padding: 12px 14px; white-space: nowrap; }
+  .admin-pipeline { grid-template-columns: repeat(2, 1fr); height: auto; }
+  .admin-jobs-overview { flex-wrap: wrap; }
+}

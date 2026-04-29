@@ -1,0 +1,921 @@
+@use 'sass:color';
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap");
+
+// ── Design Tokens ────────────────────────────────────────────────
+$bg:         #0a0b0f;
+$surface:    #111318;
+$surface2:   #181c23;
+$surface3:   #1e2330;
+$border:     rgba(255,255,255,0.06);
+$border2:    rgba(255,255,255,0.10);
+$border3:    rgba(255,255,255,0.16);
+
+$text1:      #f0f2f7;
+$text2:      #8b91a8;
+$text3:      #3d4255;
+
+$blue:       #3b82f6;
+$green:      #10b981;
+$amber:      #f59e0b;
+$purple:     #8b5cf6;
+$red:        #ef4444;
+
+$sidebar-w:  248px;
+$topbar-h:   58px;
+$r-sm:       8px;
+$r-md:       12px;
+$r-lg:       16px;
+
+// ── Skeleton ────────────────────────────────────────────────────
+.rd-skeleton {
+  background: linear-gradient(90deg, $surface2 25%, $surface3 50%, $surface2 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  display: inline-block;
+}
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+// ── Error strip ──────────────────────────────────────────────────
+.error-strip {
+  background: rgba(239,68,68,0.06);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: $r-sm;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #fca5a5;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  button {
+    background: none;
+    border: none;
+    color: #f87171;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0;
+  }
+}
+
+// ── Layout ───────────────────────────────────────────────────────
+.recruiter-layout {
+  display: flex;
+  min-height: 100vh;
+  background: $bg;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  color: $text1;
+}
+
+// ── Sidebar ─────────────────────────────────────────────────────
+.sidebar {
+  width: $sidebar-w;
+  background: $surface;
+  border-right: 1px solid $border;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  inset: 0 auto 0 0;
+  height: 100vh;
+  z-index: 50;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  height: $topbar-h;
+  border-bottom: 1px solid $border;
+  flex-shrink: 0;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 20px 12px 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: $text3;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: 0 8px;
+  margin-bottom: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: $r-sm;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: $text2;
+  transition: all 0.15s ease;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  position: relative;
+
+  .nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    flex-shrink: 0;
+    transition: opacity 0.15s;
+  }
+
+  .nav-label { flex: 1; }
+
+  .nav-badge {
+    background: $blue;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    min-width: 20px;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  &:hover {
+    background: rgba(255,255,255,0.04);
+    color: $text1;
+    .nav-icon { opacity: 1; }
+  }
+
+  &.active {
+    background: rgba($blue, 0.1);
+    color: #93c5fd;
+    .nav-icon { opacity: 1; color: #93c5fd; }
+    .nav-badge { background: rgba($blue, 0.3); color: #93c5fd; }
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 60%;
+      background: #3b82f6;
+      border-radius: 0 2px 2px 0;
+    }
+  }
+}
+
+// ── Sidebar footer ───────────────────────────────────────────────
+.sidebar-footer {
+  padding: 12px;
+  border-top: 1px solid $border;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.recruiter-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: $r-sm;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover { background: rgba(255,255,255,0.04); }
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.profile-info {
+  flex: 1;
+  overflow: hidden;
+  min-width: 0;
+
+  .profile-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .profile-role {
+    font-size: 11px;
+    color: $text3;
+    margin-top: 1px;
+  }
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: $r-sm;
+  background: none;
+  border: none;
+  color: $text2;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    background: rgba($red, 0.08);
+    color: #fca5a5;
+  }
+}
+
+// ── Main content ─────────────────────────────────────────────────
+.main-content {
+  margin-left: $sidebar-w;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 0;
+}
+
+// ── Topbar ───────────────────────────────────────────────────────
+.topbar {
+  height: $topbar-h;
+  border-bottom: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  background: $surface;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  gap: 16px;
+}
+
+.topbar-left {
+  display: flex;
+  flex-direction: column;
+
+  .page-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: $text1;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .page-date {
+    font-size: 11px;
+    color: $text3;
+    margin-top: 1px;
+  }
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+// ── Buttons ──────────────────────────────────────────────────────
+.primary-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px;
+  height: 36px;
+  background: $blue;
+  color: #fff;
+  border: none;
+  border-radius: $r-sm;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  &:hover { background: color.adjust($blue, $lightness: -8%); }
+
+  &.small {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+}
+
+.icon-action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: $r-sm;
+  background: $surface2;
+  border: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: $text2;
+  transition: all 0.15s;
+
+  &:hover {
+    background: $surface3;
+    color: $text1;
+    border-color: $border2;
+  }
+}
+
+.ghost-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background: $surface2;
+  border: 1px solid $border;
+  border-radius: $r-sm;
+  color: $text2;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba($blue, 0.08);
+    border-color: rgba($blue, 0.3);
+    color: #93c5fd;
+  }
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: $blue;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  padding: 0;
+
+  &:hover { color: color.adjust($blue, $lightness: 10%); }
+}
+
+// ── Page body ────────────────────────────────────────────────────
+.page-body {
+  padding: 24px 28px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+// ── Stat cards ───────────────────────────────────────────────────
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+
+  @media (max-width: 1100px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 700px)  { grid-template-columns: 1fr; }
+}
+
+.stat-card {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $r-lg;
+  overflow: hidden;
+  position: relative;
+  transition: border-color 0.2s, transform 0.15s;
+
+  &:hover {
+    border-color: $border2;
+    transform: translateY(-1px);
+  }
+
+  &__inner {
+    padding: 18px 20px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: $text2;
+  letter-spacing: 0.02em;
+}
+
+.stat-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: $r-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-value {
+  font-size: 30px;
+  font-weight: 700;
+  color: $text1;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  min-height: 32px;
+}
+
+.stat-delta {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: $text3;
+  min-height: 14px;
+
+  &.positive { color: $green; }
+}
+
+.stat-accent-bar {
+  height: 2px;
+  width: 100%;
+}
+
+// ── Dashboard grid ───────────────────────────────────────────────
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  align-items: start;
+
+  @media (max-width: 1000px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboard-main { display: flex; flex-direction: column; gap: 0; }
+.dashboard-side { display: flex; flex-direction: column; gap: 16px; }
+
+// ── Panel card ───────────────────────────────────────────────────
+.panel-card {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $r-lg;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid $border;
+    gap: 12px;
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 700;
+    color: $text1;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+
+  &__sub {
+    font-size: 11px;
+    color: $text3;
+    margin: 2px 0 0;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+}
+
+// ── Jobs list ────────────────────────────────────────────────────
+.jobs-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.job-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 20px;
+  border-bottom: 1px solid $border;
+  transition: background 0.15s;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: rgba(255,255,255,0.02); }
+}
+
+.job-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  letter-spacing: -0.01em;
+
+  &.large {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    font-size: 14px;
+  }
+}
+
+.job-row__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.job-row__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.job-row__meta {
+  font-size: 11px;
+  color: $text3;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-empty {
+  padding: 36px;
+  text-align: center;
+  color: $text3;
+  font-size: 13px;
+}
+
+// ── Status pills ─────────────────────────────────────────────────
+.status-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &.active  { background: rgba($green, 0.1); color: #34d399; }
+  &.paused  { background: rgba($amber, 0.1); color: #fbbf24; }
+  &.closed  { background: rgba($red, 0.1);   color: #f87171; }
+  &.draft   { background: rgba(255,255,255,0.06); color: $text2; }
+}
+
+// ── Quick actions ────────────────────────────────────────────────
+.qa-panel .panel-card__header { padding-bottom: 12px; }
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 8px 16px 16px;
+}
+
+.qa-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: $surface2;
+  border: 1px solid $border;
+  border-radius: $r-md;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+  font-family: inherit;
+
+  &:hover {
+    background: $surface3;
+    border-color: $border2;
+  }
+}
+
+.qa-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.qa-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: $text1;
+}
+
+// ── Hint list ────────────────────────────────────────────────────
+.hint-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.hint-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid $border;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:last-child { border-bottom: none; }
+
+  &:hover {
+    background: rgba($blue, 0.04);
+    .job-row__title { color: #93c5fd; }
+    .hint-arrow { opacity: 1; color: #93c5fd; }
+  }
+}
+
+.hint-arrow {
+  color: $text3;
+  opacity: 0.5;
+  transition: all 0.15s;
+  flex-shrink: 0;
+  display: flex;
+}
+
+// ── Section label ────────────────────────────────────────────────
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: $text3;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 14px;
+}
+
+// ── Full panel (jobs/applicants/activity pages) ───────────────────
+.full-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &__hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  &__eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    color: $blue;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 4px;
+  }
+
+  &__title {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: $text1;
+    margin: 0 0 4px;
+    line-height: 1.15;
+  }
+
+  &__sub {
+    font-size: 13px;
+    color: $text3;
+    margin: 0;
+  }
+}
+
+// ── Jobs full grid ───────────────────────────────────────────────
+.jobs-full-grid {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $r-lg;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.job-card-full {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid $border;
+  transition: background 0.15s;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: rgba(255,255,255,0.02); }
+  &.clickable { cursor: pointer; }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+}
+
+.job-salary {
+  font-size: 12px;
+  color: $green;
+  font-weight: 500;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.skill-tag {
+  font-size: 10px;
+  color: $text2;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid $border;
+  border-radius: 5px;
+  padding: 2px 7px;
+
+  &.more { color: $text3; border: none; background: none; }
+}
+
+// ── Funnel grid ──────────────────────────────────────────────────
+.funnel-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+
+  @media (max-width: 800px) { grid-template-columns: repeat(2, 1fr); }
+}
+
+.funnel-card {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $r-md;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s;
+
+  &:hover { border-color: $border2; }
+
+  &__label {
+    font-size: 11px;
+    font-weight: 500;
+    color: $text2;
+  }
+
+  &__value {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  &__track {
+    height: 3px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  &__fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.8s cubic-bezier(.16,1,.3,1);
+  }
+
+  &__pct {
+    font-size: 10px;
+    color: $text3;
+  }
+}
+
+// ── Timeline ─────────────────────────────────────────────────────
+.timeline {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $r-lg;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 14px;
+  position: relative;
+  padding-bottom: 18px;
+
+  &:last-child { padding-bottom: 0; }
+}
+
+.timeline-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-connector {
+  position: absolute;
+  left: 4px;
+  top: 14px;
+  bottom: 0;
+  width: 1px;
+  background: $border;
+}
+
+.timeline-content { flex: 1; min-width: 0; }
+
+.timeline-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.timeline-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: $text3;
+  margin-top: 3px;
+
+  svg { flex-shrink: 0; opacity: 0.7; }
+}
+
+// ── Responsive ───────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); &.open { transform: translateX(0); } }
+  .main-content { margin-left: 0; }
+  .page-body { padding: 16px; }
+  .topbar { padding: 0 16px; }
+}

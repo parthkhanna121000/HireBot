@@ -1,0 +1,732 @@
+@use 'sass:color';
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Bricolage+Grotesque:wght@700;800&display=swap");
+
+// ── Tokens ───────────────────────────────────────────────────────
+$bg:         #0a0b0f;
+$surface:    #111318;
+$surface2:   #181c23;
+$border:     rgba(255,255,255,0.07);
+$border2:    rgba(255,255,255,0.12);
+$accent:     #3b82f6;
+$accent-ai:  #10b981;
+$text1:      #f0f2f7;
+$text2:      #8b91a8;
+$text3:      #3d4255;
+$red:        #ef4444;
+
+// ── Layout ───────────────────────────────────────────────────────
+.pjf {
+  display: flex;
+  min-height: 100vh;
+  background: $bg;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  color: $text1;
+}
+
+// ── Sidebar ──────────────────────────────────────────────────────
+.pjf__sidebar {
+  width: 232px;
+  flex-shrink: 0;
+  background: $surface;
+  border-right: 1px solid $border;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 20px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  gap: 0;
+}
+
+.pjf__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: $text1;
+  margin-bottom: 36px;
+}
+
+.pjf__brand-mark {
+  width: 28px;
+  height: 28px;
+  background: $accent;
+  color: #fff;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.pjf__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.pjf__step {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 10px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: $text3;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  text-align: left;
+
+  &:hover { background: rgba(255,255,255,0.04); color: $text2; }
+
+  &.active {
+    background: rgba($accent, 0.1);
+    color: color.adjust($accent, $lightness: 20%);
+    .pjf__step-num {
+      background: $accent;
+      color: #fff;
+    }
+  }
+
+  &.done {
+    color: $text2;
+    .pjf__step-num {
+      background: rgba(#10b981, 0.15);
+      color: #10b981;
+    }
+  }
+}
+
+.pjf__step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.06);
+  color: $text3;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.pjf__completeness {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid $border;
+}
+
+.pjf__completeness-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: $text3;
+  margin-bottom: 8px;
+}
+
+.pjf__pct { color: $accent; font-weight: 600; }
+
+.pjf__track {
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.pjf__fill {
+  height: 100%;
+  background: $accent;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.pjf__back {
+  margin-top: 18px;
+  background: none;
+  border: none;
+  color: $text3;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 4px 0;
+  text-align: left;
+  transition: color 0.15s;
+
+  &:hover { color: $text2; }
+}
+
+// ── Main ─────────────────────────────────────────────────────────
+.pjf__main {
+  flex: 1;
+  padding: 48px 60px;
+  max-width: 720px;
+
+  @media (max-width: 880px) { padding: 28px 24px; }
+}
+
+.pjf__header {
+  margin-bottom: 36px;
+}
+
+.pjf__eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  color: $accent;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+
+.pjf__title {
+  font-family: "Bricolage Grotesque", "Plus Jakarta Sans", sans-serif;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: $text1;
+  margin: 0 0 6px;
+  line-height: 1.1;
+}
+
+.pjf__sub {
+  font-size: 14px;
+  color: $text2;
+  margin: 0;
+}
+
+// ── Error ────────────────────────────────────────────────────────
+.pjf__error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba($red, 0.07);
+  border: 1px solid rgba($red, 0.2);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 13px;
+  color: #fca5a5;
+  margin-bottom: 20px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+// ── Accordion sections ───────────────────────────────────────────
+.pjf__sections {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pjf__section {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+
+  &.active { border-color: rgba($accent, 0.25); }
+}
+
+.pjf__section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  user-select: none;
+  transition: background 0.15s;
+
+  &:hover { background: rgba(255,255,255,0.02); }
+}
+
+.pjf__section-num {
+  font-size: 11px;
+  color: $accent;
+  opacity: 0.7;
+  font-weight: 700;
+  min-width: 20px;
+}
+
+.pjf__section-name { flex: 1; }
+
+.pjf__chevron {
+  color: $text3;
+  transition: transform 0.22s;
+  flex-shrink: 0;
+
+  &.open {
+    transform: rotate(180deg);
+    color: $accent;
+  }
+}
+
+.pjf__section-body {
+  padding: 4px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: fade-in 0.18s ease;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Fields ───────────────────────────────────────────────────────
+.pjf__field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.pjf__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: $text2;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+
+  .req { color: $accent; }
+}
+
+.pjf__label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.pjf__char-count {
+  font-size: 11px;
+  color: $text3;
+}
+
+.pjf__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.pjf__section-body input,
+.pjf__section-body textarea {
+  background: $surface2;
+  border: 1px solid $border2;
+  border-radius: 9px;
+  color: $text1;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  padding: 11px 14px;
+  outline: none;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+
+  &::placeholder { color: $text3; }
+  &:focus { border-color: $accent; }
+}
+
+input[type="number"]::-webkit-inner-spin-button { opacity: 0.4; }
+
+.pjf__hint {
+  font-size: 11px;
+  color: $text3;
+  margin: 0;
+}
+
+// ── Chips ────────────────────────────────────────────────────────
+.pjf__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.chip {
+  padding: 6px 13px;
+  border-radius: 20px;
+  border: 1px solid $border2;
+  background: transparent;
+  color: $text2;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: lowercase;
+
+  &:hover { background: rgba(255,255,255,0.04); border-color: $border2; }
+
+  &.selected {
+    background: rgba($accent, 0.1);
+    border-color: rgba($accent, 0.4);
+    color: color.adjust($accent, $lightness: 20%);
+  }
+}
+
+// ── Salary preview ───────────────────────────────────────────────
+.pjf__salary-preview {
+  font-size: 12px;
+  color: #10b981;
+  background: rgba(#10b981, 0.08);
+  border: 1px solid rgba(#10b981, 0.15);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+// ── Skill tag input ──────────────────────────────────────────────
+.pjf__skill-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+  background: $surface2;
+  border: 1px solid $border2;
+  border-radius: 9px;
+  padding: 10px 12px;
+  min-height: 50px;
+  cursor: text;
+  transition: border-color 0.2s;
+
+  &:focus-within { border-color: $accent; }
+
+  input {
+    border: none !important;
+    background: transparent !important;
+    outline: none !important;
+    padding: 0 !important;
+    font-size: 13px !important;
+    color: $text1 !important;
+    min-width: 120px;
+    flex: 1;
+    box-shadow: none !important;
+
+    &::placeholder { color: $text3; }
+    &:focus { border: none; box-shadow: none; }
+  }
+}
+
+.skill-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba($accent, 0.1);
+  border: 1px solid rgba($accent, 0.2);
+  color: color.adjust($accent, $lightness: 20%);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 9px;
+  animation: chip-in 0.14s ease;
+
+  &.removable button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    opacity: 0.6;
+    transition: opacity 0.15s;
+    &:hover { opacity: 1; }
+  }
+}
+
+@keyframes chip-in {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+// ── AI Enhance bar ───────────────────────────────────────────────
+.pjf__ai-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: rgba($accent-ai, 0.04);
+  border: 1px solid rgba($accent-ai, 0.15);
+  border-radius: 10px;
+  padding: 13px 16px;
+}
+
+.pjf__ai-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: $text2;
+}
+
+.pjf__ai-badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: $accent-ai;
+  color: #fff;
+  border-radius: 4px;
+  padding: 2px 6px;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+.pjf__ai-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  background: $accent-ai;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) { filter: brightness(1.1); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+// ── Enhanced result ──────────────────────────────────────────────
+.pjf__enhanced {
+  background: $surface2;
+  border: 1px solid rgba($accent-ai, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fade-in 0.2s ease;
+}
+
+.pjf__enhanced-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: $accent-ai;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  button {
+    background: none;
+    border: none;
+    color: $text3;
+    cursor: pointer;
+    font-size: 15px;
+    padding: 0 4px;
+    transition: color 0.15s;
+    &:hover { color: $text2; }
+  }
+}
+
+.pjf__enhanced-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid $border;
+  &:last-of-type { border-bottom: none; padding-bottom: 0; }
+}
+
+.pjf__enhanced-key {
+  font-size: 11px;
+  color: $text3;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pjf__enhanced-val {
+  font-size: 14px;
+  color: $text1;
+  font-weight: 600;
+}
+
+.pjf__enhanced-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pjf__enhanced-preview {
+  font-size: 13px;
+  color: $text2;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.pjf__apply-btn {
+  align-self: flex-start;
+  background: none;
+  border: 1px solid rgba($accent-ai, 0.4);
+  color: $accent-ai;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba($accent-ai, 0.08);
+  }
+}
+
+// ── Review ───────────────────────────────────────────────────────
+.pjf__review {
+  background: $surface2;
+  border: 1px solid $border2;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.pjf__review-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: $text3;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 11px 16px;
+  border-bottom: 1px solid $border;
+}
+
+.pjf__review-row {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 9px 16px;
+  border-bottom: 1px solid $border;
+  font-size: 13px;
+
+  &:last-child { border-bottom: none; }
+}
+
+.pjf__review-key {
+  font-size: 11px;
+  color: $text3;
+  width: 72px;
+  flex-shrink: 0;
+}
+
+.pjf__review-val {
+  color: $text1;
+  line-height: 1.4;
+  min-width: 0;
+  word-break: break-word;
+
+  em { color: $text3; font-style: normal; }
+}
+
+// ── Buttons ──────────────────────────────────────────────────────
+.pjf__next {
+  align-self: flex-end;
+  background: none;
+  border: 1px solid $border2;
+  color: $text2;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s;
+
+  &:hover {
+    border-color: rgba($accent, 0.4);
+    color: color.adjust($accent, $lightness: 20%);
+    background: rgba($accent, 0.06);
+  }
+}
+
+.pjf__submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  padding: 14px;
+  background: $accent;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+}
+
+// ── Spinner ──────────────────────────────────────────────────────
+.spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(255,255,255,0.25);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ── Success screen ───────────────────────────────────────────────
+.pjf-success {
+  min-height: 100vh;
+  background: $bg;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  text-align: center;
+  animation: fade-in 0.35s ease;
+
+  &__icon {
+    width: 72px;
+    height: 72px;
+  }
+
+  h2 {
+    font-family: "Bricolage Grotesque", "Plus Jakarta Sans", sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: $text1;
+    margin: 0;
+  }
+
+  p {
+    font-size: 14px;
+    color: $text3;
+    margin: 0;
+  }
+}
+
+// ── Scrollbar ────────────────────────────────────────────────────
+.pjf__sidebar::-webkit-scrollbar { width: 3px; }
+.pjf__sidebar::-webkit-scrollbar-thumb { background: $border2; border-radius: 2px; }

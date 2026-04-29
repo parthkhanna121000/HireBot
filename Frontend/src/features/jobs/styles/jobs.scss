@@ -1,0 +1,1237 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+// ── Tokens ───────────────────────────────────────────────────────────────────
+$bg:           #0f0f0f;
+$surface:      #161616;
+$surface2:     #1e1e1e;
+$surface3:     #242424;
+$border:       rgba(255,255,255,0.06);
+$border2:      rgba(255,255,255,0.10);
+$border3:      rgba(255,255,255,0.17);
+$text1:        #f0f0f0;
+$text2:        #8a8a8a;
+$text3:        #444;
+$teal:         #1D9E75;
+$teal-dim:     rgba(29,158,117,0.13);
+$teal-glow:    rgba(29,158,117,0.22);
+$blue:         #185FA5;
+$blue-dim:     rgba(24,95,165,0.14);
+$sidebar-w:    220px;
+$rad:          10px;
+$rad-lg:       14px;
+$rad-xl:       18px;
+
+// ── Reset ────────────────────────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+button { cursor: pointer; font-family: inherit; border: none; background: none; }
+
+// ── Layout ───────────────────────────────────────────────────────────────────
+.jb-layout {
+  display: flex;
+  min-height: 100vh;
+  background: $bg;
+  font-family: "Outfit", sans-serif;
+  color: $text1;
+}
+
+.jb-page {
+  margin-left: $sidebar-w;
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.25rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+// ── Page header ──────────────────────────────────────────────────────────────
+.jb-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid $border;
+  padding-bottom: 1.25rem;
+
+  &__title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: $text1;
+    letter-spacing: -0.035em;
+    line-height: 1.15;
+  }
+
+  &__sub {
+    margin-top: 4px;
+    font-size: 13px;
+    color: $text2;
+  }
+
+  &__count {
+    font-weight: 700;
+    color: $text1;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  &__stat {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12.5px;
+    color: $text2;
+    background: $teal-dim;
+    border: 1px solid $teal-glow;
+    padding: 6px 13px;
+    border-radius: 40px;
+
+    svg { color: #34d399; flex-shrink: 0; }
+
+    strong {
+      color: #34d399;
+      font-family: "JetBrains Mono", monospace;
+    }
+  }
+}
+
+// ── Search + filter controls ──────────────────────────────────────────────────
+.jb-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.jb-search {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: $surface;
+  border: 1px solid $border2;
+  border-radius: $rad;
+  padding: 0 14px;
+  height: 44px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus-within {
+    border-color: rgba(29,158,117,0.5);
+    box-shadow: 0 0 0 3px $teal-dim;
+  }
+
+  svg { color: $text3; flex-shrink: 0; }
+
+  &__input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 13.5px;
+    color: $text1;
+    font-family: "Outfit", sans-serif;
+
+    &::placeholder { color: $text3; }
+  }
+
+  &__clear {
+    color: $text3;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    &:hover { color: $text2; }
+  }
+}
+
+.jb-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 16px;
+  height: 44px;
+  background: $surface;
+  border: 1px solid $border2;
+  border-radius: $rad;
+  font-size: 13px;
+  font-weight: 500;
+  color: $text2;
+  transition: all 0.15s;
+  white-space: nowrap;
+
+  &:hover { border-color: $border3; color: $text1; }
+
+  &--active {
+    border-color: rgba(29,158,117,0.4);
+    color: #34d399;
+    background: $teal-dim;
+  }
+
+  &__badge {
+    background: $teal;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+// ── Filter panel ──────────────────────────────────────────────────────────────
+@keyframes jb-slide-down {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.jb-filter-panel {
+  background: $surface;
+  border: 1px solid $border2;
+  border-radius: $rad-lg;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+  animation: jb-slide-down 0.18s ease;
+}
+
+.jb-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &__label {
+    font-size: 10px;
+    font-weight: 700;
+    color: $text3;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-family: "JetBrains Mono", monospace;
+  }
+}
+
+.jb-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.jb-chip {
+  padding: 4px 12px;
+  border-radius: 40px;
+  border: 1px solid $border2;
+  background: $surface2;
+  font-size: 12px;
+  font-weight: 500;
+  color: $text2;
+  text-transform: capitalize;
+  transition: all 0.14s;
+
+  &:hover { border-color: $border3; color: $text1; }
+
+  &--active {
+    background: $teal-dim;
+    border-color: rgba(29,158,117,0.4);
+    color: #34d399;
+  }
+}
+
+.jb-filter-clear {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  align-self: flex-end;
+  font-size: 12px;
+  color: $text3;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid $border;
+  transition: all 0.14s;
+
+  &:hover { color: #f87171; border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.05); }
+}
+
+// ── AI Recommended strip ──────────────────────────────────────────────────────
+.jb-rec {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $rad-lg;
+  padding: 1rem 1.125rem 0.875rem;
+
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #fbbf24;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: "JetBrains Mono", monospace;
+    margin-bottom: 0.75rem;
+  }
+
+  &__scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 13px;
+    background: $surface2;
+    border: 1px solid $border;
+    border-radius: $rad;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    min-width: 210px;
+
+    &:hover { border-color: $border3; background: $surface3; transform: translateY(-1px); }
+  }
+
+  &__logo {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  &__info { flex: 1; min-width: 0; }
+
+  &__name {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: $text1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__co { font-size: 11px; color: $text3; margin-top: 1px; }
+
+  &__score {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 40px;
+    flex-shrink: 0;
+    font-family: "JetBrains Mono", monospace;
+  }
+}
+
+// ── Results bar ───────────────────────────────────────────────────────────────
+.jb-results-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &__count {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text2;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  &__sort { font-size: 12px; color: $text3; }
+}
+
+// ── Job card grid ─────────────────────────────────────────────────────────────
+.jb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 14px;
+}
+
+// ── Job card ──────────────────────────────────────────────────────────────────
+.jb-card {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $rad-xl;
+  padding: 1.2rem;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  position: relative;
+  overflow: hidden;
+
+  // Subtle gradient sweep on hover
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: $rad-xl;
+    background: radial-gradient(circle at 80% 10%, rgba(29,158,117,0.06) 0%, transparent 55%);
+    opacity: 0;
+    transition: opacity 0.25s;
+    pointer-events: none;
+  }
+
+  &:hover {
+    border-color: $border3;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 32px rgba(0,0,0,0.35);
+
+    &::after { opacity: 1; }
+
+    .jb-card__cta {
+      background: $teal;
+      border-color: $teal;
+      color: #fff;
+    }
+  }
+
+  // "NEW" ribbon
+  &--new::before {
+    content: "NEW";
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    font-family: "JetBrains Mono", monospace;
+    background: $teal-dim;
+    color: #34d399;
+    padding: 2px 7px;
+    border-radius: 40px;
+    border: 1px solid rgba(29,158,117,0.3);
+  }
+
+  // ── Internals ────────────────────────────────────────────────────────────
+  &__top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  &__meta-top {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__company {
+    font-size: 12px;
+    font-weight: 500;
+    color: $text2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__time {
+    font-size: 11px;
+    color: $text3;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  &__score-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 40px;
+    flex-shrink: 0;
+    font-family: "JetBrains Mono", monospace;
+    margin-left: auto;
+  }
+
+  &__title {
+    font-size: 15.5px;
+    font-weight: 700;
+    color: $text1;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  &__pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11.5px;
+    padding: 3px 9px;
+    border-radius: 40px;
+    border: 1px solid $border;
+    background: $surface2;
+    text-transform: capitalize;
+
+    &--loc, &--type { color: $text2; }
+
+    &--exp {
+      font-weight: 600;
+
+      &.jb-card__pill--fresher,
+      &.jb-card__pill--junior { background: rgba(29,158,117,0.10); color: #34d399; border-color: rgba(29,158,117,0.22); }
+
+      &.jb-card__pill--mid { background: $blue-dim; color: #60a5fa; border-color: rgba(24,95,165,0.25); }
+
+      &.jb-card__pill--senior,
+      &.jb-card__pill--lead { background: rgba(124,58,237,0.12); color: #a78bfa; border-color: rgba(124,58,237,0.25); }
+    }
+  }
+
+  &__salary {
+    font-size: 12px;
+    font-weight: 700;
+    color: $text1;
+    margin-left: auto;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  &__skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  &__skill {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: $surface2;
+    border: 1px solid $border;
+    color: $text2;
+
+    &--more { color: $text3; border-style: dashed; }
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: auto;
+  }
+
+  &__bar-wrap {
+    height: 2px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  &__bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  &__cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px;
+    border-radius: $rad;
+    background: rgba(29,158,117,0.10);
+    border: 1px solid rgba(29,158,117,0.2);
+    color: #34d399;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+}
+
+// ── Skeleton ──────────────────────────────────────────────────────────────────
+@keyframes jb-shimmer {
+  0%   { background-position: -500px 0; }
+  100% { background-position:  500px 0; }
+}
+
+%jb-shimmer {
+  background: linear-gradient(90deg, $surface2 25%, $surface3 50%, $surface2 75%);
+  background-size: 1000px 100%;
+  animation: jb-shimmer 1.6s infinite;
+}
+
+.jb-skeleton {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $rad-xl;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.jb-sk {
+  &__top { display: flex; align-items: center; gap: 10px; }
+
+  &__avatar {
+    @extend %jb-shimmer;
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    flex-shrink: 0;
+  }
+
+  &__lines { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+
+  &__line {
+    @extend %jb-shimmer;
+    border-radius: 4px;
+    &--xs { height: 10px; width: 55%; }
+    &--sm { height: 12px; width: 38%; }
+    &--lg { height: 17px; width: 82%; }
+  }
+
+  &__row { display: flex; gap: 6px; }
+
+  &__pill {
+    @extend %jb-shimmer;
+    height: 22px;
+    width: 58px;
+    border-radius: 40px;
+    &--w { width: 76px; }
+  }
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+.jb-empty {
+  text-align: center;
+  padding: 5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  grid-column: 1 / -1;
+
+  &__icon {
+    width: 56px;
+    height: 56px;
+    background: $surface2;
+    border: 1px solid $border2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text3;
+    margin-bottom: 4px;
+  }
+
+  &__title { font-size: 17px; font-weight: 700; color: $text1; }
+
+  &__sub { font-size: 13px; color: $text2; }
+
+  &__reset {
+    margin-top: 8px;
+    padding: 8px 20px;
+    border-radius: $rad;
+    border: 1px solid $border2;
+    background: $surface2;
+    color: $text2;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.14s;
+    &:hover { border-color: $border3; color: $text1; }
+  }
+}
+
+// ── Pagination ────────────────────────────────────────────────────────────────
+.jb-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 2rem;
+}
+
+.jb-pag {
+  &__btn {
+    width: 36px;
+    height: 36px;
+    border-radius: $rad;
+    background: $surface;
+    border: 1px solid $border;
+    color: $text2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.14s;
+    &:hover:not(:disabled) { border-color: $border3; color: $text1; }
+    &:disabled { opacity: 0.35; cursor: not-allowed; }
+  }
+
+  &__page {
+    width: 36px;
+    height: 36px;
+    border-radius: $rad;
+    background: $surface;
+    border: 1px solid $border;
+    font-size: 13px;
+    font-weight: 500;
+    color: $text2;
+    transition: all 0.14s;
+    &:hover { border-color: $border3; color: $text1; }
+    &--active { background: $teal; border-color: $teal; color: #fff; }
+  }
+}
+
+// ── Job Drawer ────────────────────────────────────────────────────────────────
+@keyframes jb-fade-in   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes jb-slide-in  { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+.jb-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 200;
+  animation: jb-fade-in 0.2s ease;
+  backdrop-filter: blur(3px);
+}
+
+.jb-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 430px;
+  max-width: 95vw;
+  background: $surface;
+  border-left: 1px solid $border2;
+  z-index: 201;
+  overflow-y: auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  animation: jb-slide-in 0.25s cubic-bezier(0.25,1,0.5,1);
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+
+  &__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: $surface2;
+    border: 1px solid $border;
+    color: $text2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.14s;
+    &:hover { color: $text1; background: $surface3; }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-right: 2.5rem;
+  }
+
+  &__logo {
+    width: 46px;
+    height: 46px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  &__company { font-size: 12.5px; color: $text2; font-weight: 500; }
+
+  &__title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: $text1;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-top: 2px;
+  }
+
+  &__match {
+    border: 1px solid;
+    border-radius: $rad-lg;
+    padding: 0.875rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    &-top { display: flex; align-items: center; justify-content: space-between; }
+
+    &-bar {
+      height: 5px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    &-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
+  }
+
+  &__pills { display: flex; flex-wrap: wrap; gap: 7px; }
+
+  &__pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    color: $text2;
+    background: $surface2;
+    border: 1px solid $border;
+    padding: 4px 10px;
+    border-radius: 40px;
+    text-transform: capitalize;
+  }
+
+  &__section { display: flex; flex-direction: column; gap: 10px; }
+
+  &__label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: $text3;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-family: "JetBrains Mono", monospace;
+
+    &--ai {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #fbbf24;
+    }
+  }
+
+  &__skills { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  &__skill {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: $teal-dim;
+    border: 1px solid rgba(29,158,117,0.2);
+    color: #34d399;
+  }
+
+  &__desc { font-size: 13px; color: $text2; line-height: 1.7; }
+
+  &__cta {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-top: auto;
+    padding-top: 0.5rem;
+  }
+
+  &__apply {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px;
+    border-radius: $rad-lg;
+    background: $teal;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    transition: opacity 0.15s;
+    &:hover { opacity: 0.88; }
+  }
+
+  &__prep {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 11px;
+    border-radius: $rad-lg;
+    background: $surface2;
+    border: 1px solid $border2;
+    color: $text2;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.14s;
+    &:hover { border-color: $border3; color: $text1; }
+  }
+}
+
+// ── Apply modal ───────────────────────────────────────────────────────────────
+@keyframes jb-modal-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.apply-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 300;
+  animation: jb-fade-in 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.apply-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 480px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  background: $surface;
+  border: 1px solid $border2;
+  border-radius: 20px;
+  z-index: 301;
+  animation: jb-modal-in 0.25s cubic-bezier(0.25,1,0.5,1);
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px 15px;
+    border-bottom: 1px solid $border;
+    position: sticky;
+    top: 0;
+    background: $surface;
+    z-index: 1;
+    border-radius: 20px 20px 0 0;
+  }
+
+  &__job { display: flex; align-items: center; gap: 11px; }
+
+  &__logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  &__company { font-size: 12px; color: $text2; }
+
+  &__title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: $text1;
+    line-height: 1.3;
+    margin-top: 1px;
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__close {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: $surface2;
+    border: 1px solid $border;
+    color: $text2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.14s;
+    &:hover { color: $text1; background: $surface3; }
+  }
+
+  &__body {
+    padding: 20px 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    &--center { align-items: center; text-align: center; padding: 30px 20px 26px; }
+  }
+
+  &__step-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: $text3;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  &__desc { font-size: 13px; color: $text2; line-height: 1.6; margin: 0; }
+
+  &__dropzone {
+    border: 2px dashed $border2;
+    border-radius: 14px;
+    padding: 26px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    transition: all 0.18s;
+    text-align: center;
+
+    &:hover { border-color: rgba(29,158,117,0.4); background: $teal-dim; }
+    &--drag { border-color: #34d399; background: $teal-dim; transform: scale(1.01); }
+    &--ready { border-color: rgba(29,158,117,0.5); background: $teal-dim; border-style: solid; }
+  }
+
+  &__upload-icon {
+    width: 46px;
+    height: 46px;
+    background: $surface2;
+    border: 1px solid $border2;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text2;
+    margin-bottom: 4px;
+  }
+
+  &__upload-title { font-size: 14.5px; font-weight: 600; color: $text1; }
+  &__upload-sub   { font-size: 12px; color: $text3; }
+  &__file-icon    { font-size: 34px; line-height: 1; }
+  &__file-name    { font-size: 13.5px; font-weight: 600; color: $text1; word-break: break-all; }
+  &__file-size    { font-size: 12px; color: $text3; font-family: "JetBrains Mono", monospace; }
+
+  &__file-change {
+    font-size: 12px;
+    color: #34d399;
+    margin-top: 4px;
+    transition: color 0.14s;
+    &:hover { color: #6ee7b7; }
+  }
+
+  &__error {
+    font-size: 12.5px;
+    color: #f87171;
+    background: rgba(248,113,113,0.08);
+    border: 1px solid rgba(248,113,113,0.2);
+    border-radius: 9px;
+    padding: 10px 14px;
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  &__ai-note {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: $text2;
+    background: $teal-dim;
+    border: 1px solid rgba(29,158,117,0.18);
+    border-radius: 9px;
+    padding: 10px 14px;
+  }
+
+  &__ai-tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    font-weight: 700;
+    background: $teal;
+    color: #fff;
+    padding: 2px 7px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  // Spinner
+  &__spinner {
+    width: 46px;
+    height: 46px;
+    border: 3px solid rgba(255,255,255,0.07);
+    border-top: 3px solid #34d399;
+    border-radius: 50%;
+    animation: jb-spin 0.75s linear infinite;
+    margin-bottom: 8px;
+  }
+
+  @keyframes jb-spin { to { transform: rotate(360deg); } }
+
+  &__uploading-title { font-size: 16.5px; font-weight: 700; color: $text1; }
+  &__uploading-sub   { font-size: 12.5px; color: $text2; max-width: 270px; }
+
+  // Success
+  &__success-icon {
+    width: 62px;
+    height: 62px;
+    background: $teal-dim;
+    border: 1px solid rgba(29,158,117,0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #34d399;
+    margin-bottom: 4px;
+    animation: jb-pop 0.4s cubic-bezier(0.18,0.89,0.32,1.28);
+  }
+
+  @keyframes jb-pop { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+
+  &__success-title { font-size: 19px; font-weight: 800; color: $text1; letter-spacing: -0.02em; }
+
+  &__score-wrap { position: relative; width: 94px; height: 94px; margin: 8px 0 4px; }
+  &__ring       { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  &__ring-val {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 23px;
+    font-weight: 800;
+    font-family: "JetBrains Mono", monospace;
+    letter-spacing: -0.03em;
+  }
+
+  &__score-label {
+    font-size: 11px;
+    color: $text3;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-weight: 700;
+    font-family: "JetBrains Mono", monospace;
+    margin-bottom: 8px;
+  }
+
+  &__breakdown { width: 100%; display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; }
+
+  &__brow { display: flex; align-items: center; gap: 10px; text-align: left; }
+
+  &__brow-label { font-size: 11px; color: $text3; width: 68px; flex-shrink: 0; }
+
+  &__brow-track {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  &__brow-fill { height: 100%; border-radius: 2px; transition: width 0.8s cubic-bezier(0.16,1,0.3,1); }
+
+  &__brow-val { font-size: 11.5px; font-weight: 700; font-family: "JetBrains Mono", monospace; width: 22px; text-align: right; flex-shrink: 0; }
+
+  &__summary { font-size: 12px; color: $text2; line-height: 1.65; text-align: center; max-width: 320px; margin: 0; }
+
+  &__success-actions { display: flex; flex-direction: column; gap: 9px; width: 100%; margin-top: 8px; }
+
+  // Buttons
+  &__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    font-family: "Outfit", sans-serif;
+    cursor: pointer;
+    transition: all 0.18s;
+    border: none;
+
+    &--primary {
+      background: $teal;
+      color: #fff;
+      &:hover:not(:disabled) { opacity: 0.88; }
+    }
+
+    &--ghost {
+      background: $surface2;
+      border: 1px solid $border2;
+      color: $text2;
+      &:hover { color: $text1; border-color: $border3; }
+    }
+
+    &--full  { width: 100%; }
+    &--disabled { opacity: 0.4; cursor: not-allowed; }
+  }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .jb-page { margin-left: 0; padding: 1.25rem 1rem 3rem; }
+
+  .jb-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+
+  .jb-grid { grid-template-columns: 1fr; }
+
+  @keyframes jb-slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+  .jb-drawer {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid $border2;
+    top: auto;
+    bottom: 0;
+    height: 85vh;
+    border-radius: $rad-xl $rad-xl 0 0;
+    animation: jb-slide-up 0.28s cubic-bezier(0.25,1,0.5,1);
+  }
+
+  .apply-modal {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    max-height: 90vh;
+    animation: jb-slide-up 0.28s cubic-bezier(0.25,1,0.5,1);
+  }
+}
+
+@media (max-width: 540px) {
+  .jb-controls { flex-direction: column; align-items: stretch; }
+  .jb-filter-btn { justify-content: center; }
+}

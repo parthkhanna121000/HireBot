@@ -1,0 +1,431 @@
+// // ─── HireBot — Interview History Styles ──────────────────────────────────────
+
+// $base:    #08080f;
+// $card:    rgba(255,255,255,0.025);
+// $border:  rgba(255,255,255,0.06);
+// $accent:  #6366f1;
+// $green:   #10b981;
+// $amber:   #f59e0b;
+// $rose:    #f43f5e;
+// $t1:      #e8e8f5;
+// $t2:      #8888aa;
+// $t3:      #44445a;
+
+// * { box-sizing: border-box; }
+
+// .ih-layout {
+//   display: flex; min-height: 100vh;
+//   background: $base; color: $t1;
+//   font-family: "DM Sans","Inter",sans-serif;
+//   position: relative; overflow-x: hidden;
+// }
+
+// .ih-orb {
+//   position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0;
+//   &-1 { width: 500px; height: 500px; background: rgba(99,102,241,0.04); top: -80px; left: 180px; }
+//   &-2 { width: 350px; height: 350px; background: rgba(16,185,129,0.03); bottom: 0; right: 0; }
+// }
+
+// .ih-main { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; z-index: 1; }
+
+// .ih-topbar {
+//   display: flex; align-items: center; justify-content: space-between;
+//   padding: 1.25rem 2rem; border-bottom: 1px solid $border;
+//   background: rgba(8,8,15,0.7); backdrop-filter: blur(12px);
+//   position: sticky; top: 0; z-index: 10;
+// }
+// .ih-topbar-title { font-size: 18px; font-weight: 700; color: $t1; letter-spacing: -0.3px; }
+// .ih-topbar-sub   { font-size: 12.5px; color: $t2; margin-top: 2px; }
+
+// .ih-new-btn {
+//   display: flex; align-items: center; gap: 6px; padding: 9px 18px;
+//   background: linear-gradient(135deg,$accent,#8b5cf6); border: none; border-radius: 10px;
+//   color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;
+//   transition: all 0.2s; box-shadow: 0 3px 16px rgba(99,102,241,0.3);
+//   &:hover { transform: translateY(-1px); box-shadow: 0 5px 24px rgba(99,102,241,0.4); }
+// }
+
+// .ih-body { flex: 1; padding: 1.75rem 2rem 4rem; max-width: 1200px; width: 100%; }
+
+// .ih-loading, .ih-error { text-align: center; padding: 3rem; font-size: 13px; color: $t2; }
+// .ih-error { color: $rose; }
+
+// .ih-empty {
+//   display: flex; flex-direction: column; align-items: center; gap: 12px;
+//   padding: 5rem 1rem; text-align: center;
+// }
+// .ih-empty-icon { font-size: 40px; }
+// .ih-empty p    { font-size: 14px; color: $t2; }
+
+// .ih-content { display: flex; flex-direction: column; gap: 1.25rem; }
+
+// // Stats row
+// .ih-stats {
+//   display: grid; grid-template-columns: repeat(4,1fr); gap: 12px;
+//   @media(max-width:640px){grid-template-columns:repeat(2,1fr)}
+// }
+// .ih-stat-card {
+//   background: $card; border: 1px solid $border; border-radius: 12px; padding: 1.25rem;
+//   text-align: center;
+// }
+// .ih-stat-n { font-size: 28px; font-weight: 800; color: $t1; }
+// .ih-stat-l { font-size: 11px; color: $t3; margin-top: 4px; }
+
+// // Score chart
+// .ih-chart {
+//   background: $card; border: 1px solid $border; border-radius: 14px; padding: 1.25rem;
+// }
+// .ih-chart-title { font-size: 12px; font-weight: 600; color: $t2; margin-bottom: 12px; }
+
+// // Two-column layout
+// .ih-two-col {
+//   display: grid; grid-template-columns: 1fr 340px; gap: 1.25rem; align-items: start;
+//   @media(max-width:900px){grid-template-columns:1fr}
+// }
+
+// // Report list
+// .ih-list-header {
+//   display: flex; align-items: center; justify-content: space-between;
+//   font-size: 12px; font-weight: 600; color: $t2; margin-bottom: 10px;
+//   text-transform: uppercase; letter-spacing: 0.06em;
+// }
+// .ih-list-count {
+//   background: rgba(255,255,255,0.05); border-radius: 4px;
+//   padding: 2px 7px; font-size: 11px; font-family: monospace; color: $t3;
+// }
+
+// // Report card
+// .ih-card {
+//   display: flex; align-items: flex-start; gap: 14px;
+//   background: $card; border: 1px solid $border; border-radius: 14px; padding: 16px;
+//   margin-bottom: 10px; transition: border-color 0.15s;
+//   &:hover { border-color: rgba($accent,0.2); }
+// }
+
+// .ih-card-left {
+//   display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0;
+// }
+// .ih-card-rank { font-size: 10px; font-weight: 700; color: $t3; font-family: monospace; }
+
+// .ih-mini-ring { position: relative; display: flex; align-items: center; justify-content: center; }
+// .ih-mini-score { position: absolute; font-size: 11px; font-weight: 800; line-height: 1; }
+
+// .ih-card-body { flex: 1; min-width: 0; }
+// .ih-card-title { font-size: 14px; font-weight: 600; color: $t1; margin-bottom: 5px; }
+// .ih-card-meta  {
+//   display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+//   font-size: 11px; color: $t3; margin-bottom: 8px;
+//   span { display: flex; align-items: center; gap: 4px; }
+//   svg { opacity: 0.5; }
+// }
+
+// .ih-card-gaps { display: flex; gap: 6px; flex-wrap: wrap; }
+// .ih-gap-chip  {
+//   font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px;
+//   letter-spacing: 0.04em;
+// }
+
+// .ih-card-right {
+//   display: flex; flex-direction: column; align-items: flex-end; gap: 7px; flex-shrink: 0;
+// }
+
+// .ih-score-badge {
+//   font-size: 16px; font-weight: 800; padding: 4px 10px; border-radius: 7px; font-family: monospace;
+//   span { font-size: 10px; font-weight: 500; opacity: 0.7; margin-left: 1px; }
+// }
+
+// .ih-delta {
+//   display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700;
+//   padding: 2px 8px; border-radius: 4px;
+//   &--up   { color: $green; background: rgba($green,0.1); }
+//   &--down { color: $rose;  background: rgba($rose, 0.1); svg { transform: rotate(180deg); } }
+//   &--flat { color: $t3;    background: rgba(255,255,255,0.05); }
+// }
+
+// .ih-btn {
+//   display: flex; align-items: center; gap: 5px;
+//   padding: 6px 12px; border-radius: 7px; font-size: 11.5px; font-weight: 600;
+//   cursor: pointer; font-family: inherit; transition: all 0.15s; border: 1px solid;
+//   &--view   { background: rgba($accent,0.08); border-color: rgba($accent,0.2); color: #a5b4fc; &:hover{background:rgba($accent,0.16)} }
+//   &--delete { background: rgba($rose,0.06);   border-color: rgba($rose,0.15);  color: $rose;  &:hover{background:rgba($rose,0.14)} &:disabled{opacity:0.4;cursor:not-allowed} }
+// }
+
+// // Saved questions panel
+// .ih-saved {
+//   background: $card; border: 1px solid $border; border-radius: 14px; padding: 1.25rem;
+//   position: sticky; top: 80px;
+// }
+// .ih-saved-header {
+//   display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: $t1; margin-bottom: 12px;
+//   svg { color: $amber; }
+// }
+// .ih-saved-count {
+//   margin-left: auto; background: rgba($amber,0.12); border-radius: 4px;
+//   padding: 1px 7px; font-size: 11px; color: $amber; font-weight: 700; font-family: monospace;
+// }
+// .ih-saved-empty {
+//   font-size: 12px; color: $t3; line-height: 1.6; text-align: center; padding: 1rem 0;
+// }
+
+// .ih-saved-list  { display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto; margin-bottom: 12px; }
+// .ih-saved-item  { background: rgba(255,255,255,0.02); border: 1px solid $border; border-radius: 8px; padding: 10px 12px; position: relative; }
+// .ih-saved-q     { font-size: 12.5px; color: $t1; font-weight: 500; line-height: 1.4; margin-bottom: 3px; }
+// .ih-saved-src   { font-size: 10px; color: $accent; margin-bottom: 4px; }
+// .ih-saved-ans   { font-size: 11px; color: $t2; line-height: 1.45; font-style: italic; }
+// .ih-saved-remove {
+//   position: absolute; top: 6px; right: 8px; background: none; border: none;
+//   color: $t3; font-size: 16px; cursor: pointer; padding: 0; line-height: 1;
+//   &:hover { color: $rose; }
+// }
+
+// .ih-qs-source {
+//   border-top: 1px solid $border; padding-top: 12px; margin-top: 4px;
+//   summary { font-size: 12px; color: $t2; cursor: pointer; padding: 4px 0; &:hover{color:$t1} }
+// }
+// .ih-qs-list { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; max-height: 300px; overflow-y: auto; }
+// .ih-qs-item {
+//   display: flex; align-items: center; gap: 8px; padding: 7px 10px;
+//   background: rgba(255,255,255,0.02); border-radius: 6px;
+// }
+// .ih-qs-text      { flex: 1; font-size: 11.5px; color: $t2; line-height: 1.35; }
+// .ih-qs-save      { display: flex; align-items: center; gap: 3px; padding: 3px 8px; background: rgba($accent,0.1); border: 1px solid rgba($accent,0.2); border-radius: 4px; color: #a5b4fc; font-size: 10px; font-weight: 700; cursor: pointer; flex-shrink: 0; font-family: inherit; &:hover{background:rgba($accent,0.2)} }
+// .ih-qs-saved-label { font-size: 10px; color: $green; flex-shrink: 0; }
+
+
+
+// InterviewHistory.scss — centered layout, matches HireBot dark theme
+
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+$sb-width: 220px;
+
+$bg:       #0a0a0a;
+$surface:  #111111;
+$surface2: #191919;
+$surface3: #222222;
+$border:   rgba(255, 255, 255, 0.06);
+$border2:  rgba(255, 255, 255, 0.10);
+$border3:  rgba(255, 255, 255, 0.16);
+$text1:    #efefef;
+$text2:    #8a8a8a;
+$text3:    #444444;
+$accent:   #6366f1;
+$teal:     #1D9E75;
+$teal-dim: rgba(29, 158, 117, 0.12);
+$amber:    #f59e0b;
+$rose:     #f43f5e;
+$green:    #10b981;
+$mono:     "JetBrains Mono", monospace;
+$sans:     "Geist", sans-serif;
+
+*, *::before, *::after { box-sizing: border-box; }
+button { cursor: pointer; font-family: $sans; border: none; background: none; }
+
+// ── Layout ────────────────────────────────────────────────────────────────────
+.ih-layout {
+  display: flex;
+  min-height: 100vh;
+  background: $bg;
+  color: $text1;
+  font-family: $sans;
+  position: relative;
+}
+
+.ih-orb {
+  position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0;
+  &-1 { width: 480px; height: 480px; background: rgba(99,102,241,0.05); top: -80px; left: 260px; }
+  &-2 { width: 360px; height: 360px; background: rgba(29,158,117,0.04); bottom: 0; right: 0; }
+}
+
+// ── Main — offset for fixed sidebar ──────────────────────────────────────────
+.ih-main {
+  margin-left: $sb-width;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+// ── Topbar ────────────────────────────────────────────────────────────────────
+.ih-topbar {
+  height: 58px;
+  background: $surface;
+  border-bottom: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.ih-topbar-title { font-size: 17px; font-weight: 700; color: $text1; letter-spacing: -0.02em; }
+.ih-topbar-sub   { font-size: 12px; color: $text3; margin-top: 1px; font-family: $mono; }
+
+// ── Body — centered ───────────────────────────────────────────────────────────
+.ih-body {
+  flex: 1;
+  padding: 2rem 2rem 4rem;
+  max-width: 1040px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// ── New report button ─────────────────────────────────────────────────────────
+.ih-new-btn {
+  display: flex; align-items: center; gap: 6px; padding: 9px 18px;
+  background: linear-gradient(135deg, $accent, #8b5cf6); border: none; border-radius: 10px;
+  color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; font-family: $sans;
+  transition: all 0.2s; box-shadow: 0 3px 16px rgba(99,102,241,0.3);
+  &:hover { transform: translateY(-1px); box-shadow: 0 5px 24px rgba(99,102,241,0.4); }
+}
+
+// States
+.ih-loading, .ih-error { text-align: center; padding: 3rem; font-size: 13px; color: $text2; }
+.ih-error { color: $rose; }
+
+.ih-empty { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 5rem 1rem; text-align: center; }
+.ih-empty-icon { font-size: 40px; }
+.ih-empty p    { font-size: 14px; color: $text2; }
+
+.ih-content { display: flex; flex-direction: column; gap: 1.25rem; }
+
+// ── Stats row ─────────────────────────────────────────────────────────────────
+.ih-stats {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 12px;
+  @media(max-width:640px){grid-template-columns:repeat(2,1fr)}
+}
+
+.ih-stat-card {
+  background: $surface; border: 1px solid $border; border-radius: 14px;
+  padding: 1.25rem; text-align: center; transition: border-color 0.15s, transform 0.15s;
+  &:hover { border-color: $border2; transform: translateY(-1px); }
+}
+
+.ih-stat-n { font-size: 28px; font-weight: 800; color: $text1; font-family: $mono; line-height: 1; }
+.ih-stat-l { font-size: 11px; color: $text3; margin-top: 4px; }
+
+// ── Score chart ───────────────────────────────────────────────────────────────
+.ih-chart { background: $surface; border: 1px solid $border; border-radius: 14px; padding: 1.25rem; }
+.ih-chart-title { font-size: 12px; font-weight: 600; color: $text2; margin-bottom: 12px; font-family: $mono; text-transform: uppercase; letter-spacing: 0.06em; }
+
+// ── Two-col ───────────────────────────────────────────────────────────────────
+.ih-two-col {
+  display: grid; grid-template-columns: 1fr 320px; gap: 1.25rem; align-items: start;
+  @media(max-width:900px){grid-template-columns:1fr}
+}
+
+// ── Report list header ────────────────────────────────────────────────────────
+.ih-list-header {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 11px; font-weight: 700; color: $text3; margin-bottom: 10px;
+  text-transform: uppercase; letter-spacing: 0.08em; font-family: $mono;
+}
+
+.ih-list-count {
+  background: rgba(255,255,255,0.05); border-radius: 4px;
+  padding: 2px 8px; font-size: 11px; color: $text3; font-family: $mono;
+}
+
+// ── Report card ───────────────────────────────────────────────────────────────
+.ih-card {
+  display: flex; align-items: flex-start; gap: 14px;
+  background: $surface; border: 1px solid $border; border-radius: 14px;
+  padding: 16px; margin-bottom: 8px; transition: border-color 0.15s, transform 0.15s;
+  &:hover { border-color: rgba($accent,0.25); transform: translateY(-1px); }
+}
+
+.ih-card-left { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
+.ih-card-rank { font-size: 10px; font-weight: 700; color: $text3; font-family: $mono; }
+
+.ih-mini-ring { position: relative; display: flex; align-items: center; justify-content: center; }
+.ih-mini-score { position: absolute; font-size: 11px; font-weight: 800; line-height: 1; font-family: $mono; }
+
+.ih-card-body  { flex: 1; min-width: 0; }
+.ih-card-title { font-size: 14px; font-weight: 600; color: $text1; margin-bottom: 5px; }
+
+.ih-card-meta {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  font-size: 11px; color: $text3; margin-bottom: 8px; font-family: $mono;
+  span { display: flex; align-items: center; gap: 4px; }
+  svg  { opacity: 0.5; }
+}
+
+.ih-card-gaps { display: flex; gap: 6px; flex-wrap: wrap; }
+.ih-gap-chip  { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.04em; }
+
+.ih-card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 7px; flex-shrink: 0; }
+
+.ih-score-badge {
+  font-size: 16px; font-weight: 800; padding: 4px 10px; border-radius: 7px; font-family: $mono;
+  span { font-size: 10px; font-weight: 500; opacity: 0.7; margin-left: 1px; }
+}
+
+.ih-delta {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+  &--up   { color: $green; background: rgba(16,185,129,0.1); }
+  &--down { color: $rose;  background: rgba(244,63,94,0.1);  svg{transform:rotate(180deg)} }
+  &--flat { color: $text3; background: rgba(255,255,255,0.05); }
+}
+
+.ih-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: 7px; font-size: 11.5px; font-weight: 600;
+  cursor: pointer; font-family: $sans; transition: all 0.15s; border: 1px solid;
+
+  &--view   { background: rgba($accent,0.08); border-color: rgba($accent,0.2); color: #a5b4fc; &:hover{background:rgba($accent,0.16)} }
+  &--delete { background: rgba($rose,0.06);   border-color: rgba($rose,0.15);  color: $rose;  &:hover{background:rgba($rose,0.14)} &:disabled{opacity:0.4;cursor:not-allowed} }
+}
+
+// ── Saved questions panel ─────────────────────────────────────────────────────
+.ih-saved {
+  background: $surface; border: 1px solid $border; border-radius: 14px;
+  padding: 1.25rem; position: sticky; top: 72px;
+}
+
+.ih-saved-header {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 700; color: $text1; margin-bottom: 12px;
+  svg { color: $amber; }
+}
+
+.ih-saved-count {
+  margin-left: auto; background: rgba($amber,0.12); border-radius: 4px;
+  padding: 1px 7px; font-size: 11px; color: $amber; font-weight: 700; font-family: $mono;
+}
+
+.ih-saved-empty { font-size: 12px; color: $text3; line-height: 1.6; text-align: center; padding: 1rem 0; }
+
+.ih-saved-list { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; margin-bottom: 12px; scrollbar-width: thin; scrollbar-color: $border2 transparent; }
+.ih-saved-item { background: $surface2; border: 1px solid $border; border-radius: 8px; padding: 10px 12px; position: relative; }
+.ih-saved-q    { font-size: 12.5px; color: $text1; font-weight: 500; line-height: 1.4; margin-bottom: 3px; }
+.ih-saved-src  { font-size: 10px; color: $accent; margin-bottom: 4px; }
+.ih-saved-ans  { font-size: 11px; color: $text2; line-height: 1.45; font-style: italic; }
+
+.ih-saved-remove {
+  position: absolute; top: 6px; right: 8px; background: none; border: none;
+  color: $text3; font-size: 16px; cursor: pointer; padding: 0; line-height: 1;
+  &:hover { color: $rose; }
+}
+
+.ih-qs-source {
+  border-top: 1px solid $border; padding-top: 12px; margin-top: 4px;
+  summary { font-size: 12px; color: $text2; cursor: pointer; padding: 4px 0; &:hover{color:$text1} }
+}
+
+.ih-qs-list { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; max-height: 280px; overflow-y: auto; }
+.ih-qs-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; background: rgba(255,255,255,0.02); border-radius: 6px; }
+.ih-qs-text        { flex: 1; font-size: 11.5px; color: $text2; line-height: 1.35; }
+.ih-qs-save        { display: flex; align-items: center; gap: 3px; padding: 3px 8px; background: rgba($accent,0.1); border: 1px solid rgba($accent,0.2); border-radius: 4px; color: #a5b4fc; font-size: 10px; font-weight: 700; cursor: pointer; flex-shrink: 0; font-family: $sans; &:hover{background:rgba($accent,0.2)} }
+.ih-qs-saved-label { font-size: 10px; color: $green; flex-shrink: 0; }
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+@media (max-width: 720px) {
+  .ih-main { margin-left: 0; }
+  .ih-body { padding: 1.25rem 1rem 3rem; }
+}

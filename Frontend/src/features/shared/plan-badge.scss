@@ -1,0 +1,78 @@
+// plan-badge.scss
+
+.plan-badge {
+  border-radius: 12px;
+  padding: 14px 16px;
+
+  &--pro {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(124, 58, 237, 0.08);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+  }
+
+  &--free {
+    background: #111;
+    border: 1px solid #1e1e1e;
+  }
+
+  &__icon {
+    font-size: 14px;
+  }
+
+  &__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #a78bfa;
+    flex: 1;
+  }
+
+  &__expiry {
+    font-size: 11px;
+    color: #666;
+    white-space: nowrap;
+  }
+
+  // Free plan
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  &__chip {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #555;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  &__usage {
+    font-size: 11px;
+    color: #555;
+  }
+
+  &__upgrade {
+    display: block;
+    width: 100%;
+    padding: 9px;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    text-align: center;
+
+    &:hover { opacity: 0.9; transform: translateY(-1px); }
+    &:active { transform: translateY(0); }
+  }
+}

@@ -1,0 +1,765 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Bricolage+Grotesque:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+
+// ── Tokens ───────────────────────────────────────────────────────
+$bg:         #0a0b0f;
+$surface:    #111318;
+$surface2:   #181c23;
+$border:     rgba(255,255,255,0.06);
+$border2:    rgba(255,255,255,0.10);
+$border3:    rgba(255,255,255,0.16);
+
+$text1:      #f0f2f7;
+$text2:      #8b91a8;
+$text3:      #3d4255;
+
+$mono: "JetBrains Mono", monospace;
+$sans: "Plus Jakarta Sans", sans-serif;
+
+// ── Shell ────────────────────────────────────────────────────────
+.ar {
+  min-height: 100vh;
+  background: $bg;
+  color: $text1;
+  font-family: $sans;
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 28px;
+    height: 58px;
+    background: $surface;
+    border-bottom: 1px solid $border;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  &__back {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: $surface2;
+    border: 1px solid $border;
+    color: $text2;
+    font-family: $sans;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &:hover { color: $text1; border-color: $border2; background: rgba(255,255,255,0.05); }
+  }
+
+  &__header-center {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    color: #3b82f6;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin: 0 0 2px;
+  }
+
+  &__title {
+    font-family: "Bricolage Grotesque", $sans;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  &__total {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    background: $surface2;
+    border: 1px solid $border;
+    border-radius: 9px;
+    padding: 6px 14px;
+  }
+
+  &__total-num {
+    font-family: "Bricolage Grotesque", $sans;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  &__total-label {
+    font-size: 11px;
+    color: $text3;
+  }
+
+  &__refresh {
+    width: 34px;
+    height: 34px;
+    background: $surface2;
+    border: 1px solid $border;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: $text2;
+    transition: all 0.15s;
+
+    &:hover { color: $text1; border-color: $border2; }
+  }
+
+  &__filters {
+    display: flex;
+    gap: 4px;
+    padding: 12px 28px;
+    background: $surface;
+    border-bottom: 1px solid $border;
+    overflow-x: auto;
+
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__filter-tab {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 13px;
+    border-radius: 7px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: $text2;
+    font-family: $sans;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    text-transform: capitalize;
+
+    &:hover { background: rgba(255,255,255,0.04); color: $text1; }
+
+    &.active {
+      background: rgba(255,255,255,0.06);
+      border-color: $border2;
+      color: $text1;
+    }
+  }
+
+  &__filter-count {
+    font-size: 11px;
+    font-weight: 700;
+    color: $text3;
+    font-family: $mono;
+
+    .active & { color: $text1; }
+  }
+
+  &__error {
+    margin: 16px 28px 0;
+    background: rgba(239,68,68,0.06);
+    border: 1px solid rgba(239,68,68,0.18);
+    border-radius: 9px;
+    padding: 11px 16px;
+    font-size: 13px;
+    color: #fca5a5;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    button {
+      background: none;
+      border: none;
+      color: #f87171;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: $sans;
+      padding: 0;
+      text-decoration: underline;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    padding: 20px 28px 48px;
+  }
+
+  &__table {
+    background: $surface;
+    border: 1px solid $border;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  &__col-labels {
+    display: grid;
+    grid-template-columns: 48px 1fr 60px 200px 110px 148px;
+    gap: 12px;
+    padding: 10px 20px;
+    border-bottom: 1px solid $border;
+
+    @media (max-width: 900px) { display: none; }
+  }
+
+  &__cl {
+    font-size: 10px;
+    font-weight: 700;
+    color: $text3;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: $mono;
+  }
+
+  &__rows {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__empty {
+    padding: 48px;
+    text-align: center;
+    color: $text3;
+    font-size: 13px;
+  }
+}
+
+// ── Row ──────────────────────────────────────────────────────────
+.ar-row {
+  display: grid;
+  grid-template-columns: 48px 1fr 60px 200px 110px 148px;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid $border;
+  transition: background 0.15s;
+  animation: row-in 0.28s ease both;
+
+  &:last-child { border-bottom: none; }
+
+  &:hover { background: rgba(255,255,255,0.02); }
+
+  &--selected { background: rgba(59,130,246,0.04); border-bottom-color: rgba(59,130,246,0.12); }
+
+  &--gold {
+    border-left: 2px solid #f5c842;
+    padding-left: 18px;
+    background: rgba(245,200,66,0.02);
+  }
+
+  &.skel-row { pointer-events: none; }
+
+  &__rank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__identity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  &__avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: "Bricolage Grotesque", $sans;
+  }
+
+  &__name {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__email {
+    font-size: 11px;
+    color: $text3;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: $mono;
+  }
+
+  &__score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  &__status {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: 40px 1fr auto;
+    &__score, &__breakdown, &__status { display: none; }
+  }
+}
+
+// ── Rank ─────────────────────────────────────────────────────────
+.medal {
+  font-family: "Bricolage Grotesque", $sans;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.rank-num {
+  font-family: $mono;
+  font-size: 14px;
+  font-weight: 500;
+  color: $text3;
+}
+
+// ── Score ring ───────────────────────────────────────────────────
+.score-ring {
+  position: relative;
+  flex-shrink: 0;
+
+  &__val {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: $mono;
+    letter-spacing: -0.02em;
+  }
+}
+
+// ── Sub bar ──────────────────────────────────────────────────────
+.sub-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  &__label {
+    font-size: 10px;
+    color: $text3;
+    width: 40px;
+    flex-shrink: 0;
+    font-family: $mono;
+  }
+
+  &__track {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  &__fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(.16,1,.3,1);
+  }
+
+  &__val {
+    font-family: $mono;
+    font-size: 11px;
+    font-weight: 500;
+    width: 24px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+}
+
+// ── Status dot ───────────────────────────────────────────────────
+.status-dot {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  font-family: $sans;
+}
+
+// ── Action buttons ───────────────────────────────────────────────
+.action-btn {
+  padding: 5px 10px;
+  border-radius: 7px;
+  border: 1px solid $border2;
+  font-family: $sans;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: transparent;
+
+  &.view {
+    color: #60a5fa;
+    border-color: rgba(59,130,246,0.2);
+    background: rgba(59,130,246,0.06);
+    &:hover { background: rgba(59,130,246,0.12); }
+    &.active { background: rgba(59,130,246,0.15); }
+  }
+
+  &.shortlist {
+    color: #34d399;
+    border-color: rgba(16,185,129,0.2);
+    background: rgba(16,185,129,0.05);
+    font-size: 13px;
+    padding: 4px 8px;
+    &:hover { background: rgba(16,185,129,0.12); }
+  }
+
+  &.reject {
+    color: #f87171;
+    border-color: rgba(239,68,68,0.15);
+    background: transparent;
+    font-size: 13px;
+    padding: 4px 8px;
+    &:hover { background: rgba(239,68,68,0.08); }
+  }
+
+  &:disabled { opacity: 0.35; cursor: not-allowed; }
+}
+
+// ── Skeleton ─────────────────────────────────────────────────────
+.skel {
+  background: linear-gradient(90deg, #181c23 25%, #1e2330 50%, #181c23 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  display: block;
+}
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+// ── Tag groups ───────────────────────────────────────────────────
+.tag-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 5px;
+  font-family: $sans;
+
+  &--green {
+    background: rgba(16,185,129,0.1);
+    color: #34d399;
+    border: 1px solid rgba(16,185,129,0.2);
+  }
+
+  &--amber {
+    background: rgba(245,158,11,0.1);
+    color: #fbbf24;
+    border: 1px solid rgba(245,158,11,0.2);
+  }
+
+  &--red {
+    background: rgba(239,68,68,0.08);
+    color: #f87171;
+    border: 1px solid rgba(239,68,68,0.15);
+  }
+}
+
+// ── Overlay & Drawer ─────────────────────────────────────────────
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 70;
+  animation: fade-in 0.2s ease;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 390px;
+  max-width: 95vw;
+  background: #111318;
+  border-left: 1px solid rgba(255,255,255,0.1);
+  z-index: 80;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  animation: slide-in 0.26s cubic-bezier(.16,1,.3,1);
+
+  &::-webkit-scrollbar { width: 3px; }
+  &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid $border;
+    position: sticky;
+    top: 0;
+    background: #111318;
+    z-index: 2;
+  }
+
+  &__who {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: "Bricolage Grotesque", $sans;
+  }
+
+  &__name {
+    font-size: 15px;
+    font-weight: 700;
+    color: $text1;
+    line-height: 1.2;
+  }
+
+  &__email {
+    font-size: 11px;
+    color: $text3;
+    margin-top: 2px;
+    font-family: $mono;
+  }
+
+  &__close {
+    width: 32px;
+    height: 32px;
+    background: $surface2;
+    border: 1px solid $border;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: $text2;
+    transition: all 0.15s;
+    flex-shrink: 0;
+
+    &:hover { color: $text1; border-color: $border2; }
+  }
+
+  &__hero {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 20px 22px;
+    border-bottom: 1px solid $border;
+    background: linear-gradient(135deg, rgba(255,255,255,0.02), transparent);
+  }
+
+  &__hero-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  &__hero-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: $text3;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  &__verdict {
+    font-size: 12px;
+    color: $text2;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  &__section {
+    padding: 16px 22px;
+    border-bottom: 1px solid $border;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__section-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: $text3;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  &__note {
+    background: $surface2;
+    border: 1px solid $border2;
+    border-radius: 9px;
+    color: $text1;
+    font-family: $sans;
+    font-size: 13px;
+    padding: 10px 12px;
+    resize: vertical;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+
+    &::placeholder { color: $text3; }
+    &:focus { border-color: #3b82f6; }
+  }
+
+  &__note-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  &__decisions {
+    display: flex;
+    gap: 8px;
+    padding: 16px 22px 24px;
+    flex-wrap: wrap;
+  }
+
+  &__save-error {
+    padding: 0 22px 14px;
+    font-size: 11px;
+    color: #f87171;
+    font-family: $sans;
+  }
+}
+
+// ── Note status ──────────────────────────────────────────────────
+.note-status {
+  font-size: 11px;
+  margin-right: auto;
+  font-family: $sans;
+
+  &.success { color: #34d399; }
+  &.error   { color: #f87171; }
+}
+
+.note-save-btn {
+  padding: 6px 14px;
+  background: rgba(59,130,246,0.08);
+  border: 1px solid rgba(59,130,246,0.2);
+  border-radius: 7px;
+  color: #60a5fa;
+  font-family: $sans;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover:not(:disabled) { background: rgba(59,130,246,0.15); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// ── Decision buttons ─────────────────────────────────────────────
+.decision-btn {
+  flex: 1;
+  padding: 11px;
+  border-radius: 9px;
+  border: none;
+  font-family: $sans;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+
+  &.shortlist {
+    background: rgba(16,185,129,0.1);
+    color: #34d399;
+    border: 1px solid rgba(16,185,129,0.2);
+    &:hover:not(:disabled) { background: rgba(16,185,129,0.18); }
+  }
+
+  &.hire {
+    background: rgba(139,92,246,0.1);
+    color: #c4b5fd;
+    border: 1px solid rgba(139,92,246,0.2);
+    &:hover:not(:disabled) { background: rgba(139,92,246,0.18); }
+  }
+
+  &.reject {
+    background: transparent;
+    color: #f87171;
+    border: 1px solid rgba(239,68,68,0.15);
+    &:hover:not(:disabled) { background: rgba(239,68,68,0.08); }
+  }
+
+  &:disabled { opacity: 0.35; cursor: not-allowed; }
+}
+
+// ── Keyframes ────────────────────────────────────────────────────
+@keyframes row-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
