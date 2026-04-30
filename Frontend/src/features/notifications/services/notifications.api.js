@@ -6,7 +6,7 @@ const API = axios.create({
 });
 
 export const getNotifications = async () => {
-  const { data } = await API.get("/");
+  const { data } = await API.get(""); // ← fixed
   return data;
 };
 

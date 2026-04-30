@@ -14,6 +14,7 @@ $sb-teal-glow:   rgba(29, 158, 117, 0.25);
 $sb-red-dim:     rgba(239, 68, 68, 0.08);
 $sb-width:       248px;
 $sb-topbar-h:    60px;
+$sb-mobile-topbar-h: 56px;
 
 // ── Keyframes ─────────────────────────────────────────────────────────────────
 @keyframes hb-indicator-glow {
@@ -34,14 +35,9 @@ $sb-topbar-h:    60px;
   border-right: 1px solid $sb-border;
   display: flex;
   flex-direction: column;
-  position: fixed;
-  top: 0;
-  left: 0;
   height: 100vh;
-  z-index: 50;
   overflow: hidden;
 
-  // Subtle top ambient glow
   &__glow {
     position: absolute;
     top: 0;
@@ -56,6 +52,116 @@ $sb-topbar-h:    60px;
     pointer-events: none;
     z-index: 0;
   }
+
+  // Close button — only visible on mobile
+  &__close-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: $sb-text2;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease, background 0.15s ease;
+
+    &:hover {
+      color: $sb-text1;
+      background: rgba(255,255,255,0.06);
+    }
+
+    @media (max-width: 768px) {
+      display: flex;
+    }
+  }
+}
+
+// ── Desktop wrapper (fixed position) ─────────────────────────────────────────
+.hb-sidebar-desktop {
+  display: block;
+
+  .hb-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 50;
+  }
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+// ── Mobile drawer wrapper ─────────────────────────────────────────────────────
+.hb-sidebar-mobile {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  height: 100vh;
+
+  .hb-sidebar {
+    position: relative;
+    height: 100vh;
+    box-shadow: 4px 0 32px rgba(0, 0, 0, 0.6);
+  }
+
+  @media (min-width: 769px) {
+    display: none;
+  }
+}
+
+// ── Mobile backdrop ───────────────────────────────────────────────────────────
+.hb-sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  z-index: 199;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+}
+
+// ── Mobile Top Bar ────────────────────────────────────────────────────────────
+.hb-mobile-topbar {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $sb-mobile-topbar-h;
+  background: $sb-bg;
+  border-bottom: 1px solid $sb-border;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 100;
+
+  &__menu-btn {
+    background: none;
+    border: none;
+    color: $sb-text2;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease, background 0.15s ease;
+
+    &:hover {
+      color: $sb-text1;
+      background: rgba(255,255,255,0.06);
+    }
+  }
+
+  @media (max-width: 768px) {
+    display: flex;
+  }
 }
 
 // ── Logo row ──────────────────────────────────────────────────────────────────
@@ -69,6 +175,12 @@ $sb-topbar-h:    60px;
   flex-shrink: 0;
   position: relative;
   z-index: 1;
+}
+
+.hb-sidebar__logo-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 // ── Navigation container ──────────────────────────────────────────────────────
@@ -122,6 +234,11 @@ $sb-topbar-h:    60px;
   position: relative;
   margin-bottom: 1px;
 
+  @media (max-width: 768px) {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
   &__icon {
     display: flex;
     align-items: center;
@@ -151,7 +268,6 @@ $sb-topbar-h:    60px;
     line-height: 1.4;
   }
 
-  // Left-edge active indicator pill
   &__indicator {
     position: absolute;
     left: -10px;
@@ -172,7 +288,6 @@ $sb-topbar-h:    60px;
     .hb-nav-item__icon { opacity: 0.9; }
   }
 
-  // ── Active ─────────────────────────────────────────────────────────────
   &--active {
     background: $sb-teal-dim;
     color: #5eead4;
@@ -318,10 +433,9 @@ $sb-topbar-h:    60px;
 .hb-page-with-sidebar {
   margin-left: $sb-width;
   min-height: 100vh;
-}
 
-// ── Responsive ───────────────────────────────────────────────────────────────
-@media (max-width: 720px) {
-  .hb-sidebar { transform: translateX(-100%); }
-  .hb-page-with-sidebar { margin-left: 0; }
+  @media (max-width: 768px) {
+    margin-left: 0;
+    padding-top: $sb-mobile-topbar-h;
+  }
 }

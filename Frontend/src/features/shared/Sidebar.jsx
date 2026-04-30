@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
@@ -21,6 +22,24 @@ const SettingsIcon = () => <svg width="13" height="13" viewBox="0 0 24 24" fill=
 const LogOutIcon   = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>;
 const ShieldIcon   = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>;
 
+// Hamburger Icon
+const MenuIcon = ({ open }) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    {open ? (
+      <>
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </>
+    ) : (
+      <>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </>
+    )}
+  </svg>
+);
+
 // ─── Nav items ─────────────────────────────────────────────────────────────────
 const NAV_SECTIONS = [
   {
@@ -35,7 +54,7 @@ const NAV_SECTIONS = [
     label: "Prep",
     items: [
       { path: "/interview-prep",    label: "Interview Prep", icon: <BotIcon /> },
-      { path: "/interview-history", label: "History",         icon: <HistoryIcon /> },
+      { path: "/interview-history", label: "History",        icon: <HistoryIcon /> },
       { path: "/applications",      label: "Applications",   icon: <CheckIcon />, badge: "4" },
     ],
   },
@@ -64,6 +83,22 @@ const itemVariants = (i) => ({
 export default function Sidebar({ user }) {
   const navigate     = useNavigate();
   const { pathname } = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Close sidebar on route change (mobile)
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  // Prevent body scroll when mobile sidebar is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
 
   const handleLogout = async () => {
     try { await ax.get("/api/auth/logout"); } catch { /* ignore */ }
@@ -77,7 +112,7 @@ export default function Sidebar({ user }) {
 
   let globalIdx = 0;
 
-  return (
+  const sidebarContent = (
     <motion.aside
       className="hb-sidebar"
       variants={sidebarVariants}
@@ -88,7 +123,17 @@ export default function Sidebar({ user }) {
 
       <div className="hb-sidebar__logo">
         <HireBotLogo size={28} textSize={14} />
-        <NotificationBell />
+        <div className="hb-sidebar__logo-right">
+          <NotificationBell />
+          {/* Close button - mobile only */}
+          <button
+            className="hb-sidebar__close-btn"
+            onClick={() => setMobileOpen(false)}
+            aria-label="Close menu"
+          >
+            <MenuIcon open={true} />
+          </button>
+        </div>
       </div>
 
       <nav className="hb-sidebar__nav" aria-label="Main navigation">
@@ -151,7 +196,7 @@ export default function Sidebar({ user }) {
             >
               <span className="hb-nav-item__icon"><ShieldIcon /></span>
               <span className="hb-nav-item__label">Admin Dashboard</span>
-              
+
               <AnimatePresence>
                 {isActive("/admin") && (
                   <motion.span
@@ -213,5 +258,48 @@ export default function Sidebar({ user }) {
         </motion.button>
       </motion.div>
     </motion.aside>
+  );
+
+  return (
+    <>
+      {/* ── Mobile Top Bar ──────────────────────────────────────────────── */}
+      <div className="hb-mobile-topbar">
+        <button
+          className="hb-mobile-topbar__menu-btn"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open menu"
+        >
+          <MenuIcon open={false} />
+        </button>
+        <HireBotLogo size={22} textSize={13} />
+        <NotificationBell />
+      </div>
+
+      {/* ── Desktop Sidebar (always visible) ───────────────────────────── */}
+      <div className="hb-sidebar-desktop">
+        {sidebarContent}
+      </div>
+
+      {/* ── Mobile Sidebar (drawer) ─────────────────────────────────────── */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              className="hb-sidebar-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              onClick={() => setMobileOpen(false)}
+            />
+            {/* Drawer */}
+            <div className="hb-sidebar-mobile">
+              {sidebarContent}
+            </div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
