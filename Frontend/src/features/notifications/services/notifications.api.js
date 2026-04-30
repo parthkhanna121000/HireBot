@@ -1,12 +1,17 @@
 import axios from "axios";
 
+const BASE = (import.meta.env.VITE_API_URL || "http://localhost:3000").replace(
+  /\/$/,
+  "",
+);
+
 const API = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api/notifications`,
+  baseURL: `${BASE}/api/notifications`,
   withCredentials: true,
 });
 
 export const getNotifications = async () => {
-  const { data } = await API.get(""); // ← fixed
+  const { data } = await API.get("/");
   return data;
 };
 
