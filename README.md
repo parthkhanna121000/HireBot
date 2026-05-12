@@ -9,14 +9,27 @@
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=flat-square&logo=mongodb&logoColor=white)](https://mongodb.com)
 [![Google Gemini](https://img.shields.io/badge/Google-Gemini%202.0%20Flash-4285F4?style=flat-square&logo=google&logoColor=white)](https://ai.google.dev)
 [![Express](https://img.shields.io/badge/Express.js-4+-000000?style=flat-square&logo=express&logoColor=white)](https://expressjs.com)
+[![Live](https://img.shields.io/badge/Live-Deployed-brightgreen?style=flat-square&logo=vercel)](https://hire-bot-six.vercel.app)
 
 **Get Hired Faster with AI Intelligence**
 
 _Upload your resume → Get AI Score → Fix gaps → Apply smarter_
 
+🌐 **Live Demo:** [hire-bot-six.vercel.app](https://hire-bot-six.vercel.app)
+
 [🚀 Features](#-features) • [🛠️ Tech Stack](#️-tech-stack) • [📦 Installation](#-installation) • [🔌 API Docs](#-api-documentation) • [🗺️ Project Flow](#️-project-flow)
 
 </div>
+
+---
+
+## 🌐 Deployment
+
+| Service  | Platform      | URL                                                                            |
+| -------- | ------------- | ------------------------------------------------------------------------------ |
+| Frontend | Vercel        | [hire-bot-six.vercel.app](https://hire-bot-six.vercel.app)                     |
+| Backend  | Render        | [hirebot-backend-s16s.onrender.com](https://hirebot-backend-s16s.onrender.com) |
+| Database | MongoDB Atlas | Cloud-hosted                                                                   |
 
 ---
 
@@ -86,7 +99,7 @@ HireBot is a production-ready, full-stack AI-powered hiring SaaS platform that s
 
 | Feature                  | Free Plan      | Pro Plan                      |
 | ------------------------ | -------------- | ----------------------------- |
-| Resume Analyses          | Limited month  | Unlimited                     |
+| Resume Analyses          | Limited/month  | Unlimited                     |
 | Interview Reports        | Limited        | Unlimited                     |
 | Job Applications         | Unlimited      | Unlimited                     |
 | AI Candidate Ranking     | ✅ Included    | ✅ Included                   |
@@ -418,7 +431,7 @@ Open → **http://localhost:5173**
 | Token Revocation     | `BlacklistToken` collection — stolen tokens invalidated immediately on logout                        |
 | Role Guards          | `requireRole()` middleware on all protected backend routes                                           |
 | Frontend Protection  | `Protected` component with role-aware redirect via `ROLE_HOME` map                                   |
-| Cookie Flags         | `httpOnly: true`, `secure: true`, `sameSite: 'strict'` — CSRF resistant                              |
+| Cookie Flags         | `httpOnly: true`, `secure: true`, `sameSite: 'none'` — cross-origin safe                             |
 | File Upload Security | Multer validates PDF MIME type, 3 MB limit, `memoryStorage` — files never touch disk                 |
 | CORS                 | Specific `FRONTEND_URL` origin only, `credentials: true` — first middleware registered               |
 | AI Output Validation | Zod schemas on Gemini `responseSchema` — prevents schema drift and malformed output                  |
@@ -478,6 +491,7 @@ The order of middleware in `app.js` is security-critical. Incorrect ordering cau
 
 | Setting       | Value                                                                                  |
 | ------------- | -------------------------------------------------------------------------------------- |
+| Live URL      | [hirebot-backend-s16s.onrender.com](https://hirebot-backend-s16s.onrender.com)         |
 | Subfolder     | `Backend/`                                                                             |
 | Build command | `npm install`                                                                          |
 | Start command | `node server.js`                                                                       |
@@ -487,9 +501,10 @@ The order of middleware in `app.js` is security-critical. Incorrect ordering cau
 
 | Setting        | Value                                                                   |
 | -------------- | ----------------------------------------------------------------------- |
+| Live URL       | [hire-bot-six.vercel.app](https://hire-bot-six.vercel.app)              |
 | Subfolder      | `Frontend/`                                                             |
 | Framework      | Vite                                                                    |
-| `VITE_API_URL` | Your Render backend URL                                                 |
+| `VITE_API_URL` | `https://hirebot-backend-s16s.onrender.com`                             |
 | `vercel.json`  | `{ "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }` |
 
 > Before deploying frontend, update all Axios `baseURL` references to `import.meta.env.VITE_API_URL`.
@@ -508,18 +523,18 @@ The order of middleware in `app.js` is security-critical. Incorrect ordering cau
 
 ## 📊 Project Stats
 
-| Metric                  | Count                    |
-| ----------------------- | ------------------------ |
-| REST API Endpoints      | 35                       |
-| Database Models         | 7                        |
-| AI Features             | 6                        |
-| Frontend Pages          | 14                       |
-| Bugs Identified & Fixed | 20                       |
-| Overall Completion      | 99% (Deployment Pending) |
+| Metric                  | Count              |
+| ----------------------- | ------------------ |
+| REST API Endpoints      | 35                 |
+| Database Models         | 7                  |
+| AI Features             | 6                  |
+| Frontend Pages          | 14                 |
+| Bugs Identified & Fixed | 20+                |
+| Overall Completion      | ✅ 100% — Deployed |
 
 ---
 
-## 👨‍💻 Author
+## 👨‍💻 Authors
 
 **Parth Khanna** — B.Tech Computer Science Engineering, Final Semester
 **Aman Maurya** — B.Tech Computer Science Engineering, Final Semester
@@ -537,11 +552,9 @@ This project is licensed under the MIT License.
 ---
 
 <div align="center">
+
 **Built with ❤️ using React, Node.js, MongoDB, Google Gemini AI & Razorpay**
- 
+
 ⭐ Star this repo if you found it helpful!
- 
+
 </div>
- 
-  
- 
