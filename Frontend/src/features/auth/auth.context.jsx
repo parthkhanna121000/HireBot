@@ -16,6 +16,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     let cancelled = false;
+    
 
     const checkAuth = async () => {
       try {

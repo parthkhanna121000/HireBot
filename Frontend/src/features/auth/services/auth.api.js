@@ -93,7 +93,7 @@ const api = axios.create({
   withCredentials: true, // sends HTTP-only cookie with every request
 });
 
-/**
+/**4
  * Axios response interceptor
  * Converts every non-2xx response into a thrown Error with the backend's
  * message string, so every caller gets: catch (err) => err.message
