@@ -119,7 +119,7 @@ export async function register({
   companyName,
   companyWebsite,
 }) {
-  const { data } = await api.post("/api/auth/register", {
+  const { data } = await api.post("/auth/register", {
     username,
     email,
     password,
@@ -133,12 +133,12 @@ export async function register({
 }
 
 export async function login({ email, password }) {
-  const { data } = await api.post("/api/auth/login", { email, password });
+  const { data } = await api.post("/auth/login", { email, password });
   return data;
 }
 
 export async function logout() {
-  const { data } = await api.get("/api/auth/logout");
+  const { data } = await api.get("/auth/logout");
   return data;
 }
 
