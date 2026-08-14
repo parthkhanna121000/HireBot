@@ -12,10 +12,11 @@ $sb-text3:           #4E5D78;
 $sb-accent:          #3B82F6;
 $sb-accent-teal:     #14B8A6;
 $sb-red-dim:         rgba(239, 68, 68, 0.12);
-$sb-topbar-h:        70px;
+$sb-topbar-h:        60px;
 $sb-mobile-topbar-h: 60px;
+$sb-sidebar-width:   180px; // Reduced from 220px for a sleeker look
 
-// ── Visibility helpers (referenced in Sidebar.jsx) ─────────────────────────────
+// ── Visibility helpers ────────────────────────────────────────────────────────
 .hb-desktop-only {
   @media (max-width: 768px) {
     display: none !important;
@@ -33,7 +34,7 @@ $sb-mobile-topbar-h: 60px;
 // ── Keyframes ─────────────────────────────────────────────────────────────────
 @keyframes indicatorPulse {
   0%, 100% { box-shadow: 0 0 6px rgba(59, 130, 246, 0.35); }
-  50%       { box-shadow: 0 0 10px rgba(59, 130, 246, 0.55); }
+  50%      { box-shadow: 0 0 10px rgba(59, 130, 246, 0.55); }
 }
 
 // ── Sidebar shell ─────────────────────────────────────────────────────────────
@@ -47,8 +48,6 @@ $sb-mobile-topbar-h: 60px;
   position: relative;
   box-shadow: 20px 0 50px rgba(0, 0, 0, 0.6);
 
-  // Static glow — no animation. A flickering blur behind nav items reads busy,
-  // not premium, and forces a repaint loop for no visual payoff.
   &__glow {
     position: absolute;
     top: -60px;
@@ -65,8 +64,8 @@ $sb-mobile-topbar-h: 60px;
     border: 1px solid $sb-border;
     color: $sb-text2;
     cursor: pointer;
-    padding: 6px;
-    border-radius: 8px;
+    padding: 5px;
+    border-radius: 7px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -85,8 +84,8 @@ $sb-mobile-topbar-h: 60px;
     border: 1px solid $sb-border;
     color: $sb-text2;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 10px;
+    padding: 7px;
+    border-radius: 9px;
     align-items: center;
     justify-content: center;
 
@@ -98,15 +97,15 @@ $sb-mobile-topbar-h: 60px;
   &--collapsed {
     .hb-nav-item {
       justify-content: center;
-      padding: 12px;
+      padding: 10px;
     }
     .hb-profile {
       justify-content: center;
-      padding: 10px;
+      padding: 9px;
     }
     .hb-logout {
       justify-content: center;
-      padding: 10px;
+      padding: 9px;
     }
   }
 }
@@ -134,12 +133,12 @@ $sb-mobile-topbar-h: 60px;
   left: 0;
   z-index: 200;
   height: 100vh;
-  width: 260px;
+  width: $sb-sidebar-width;
 
   .hb-sidebar {
     position: relative;
     height: 100vh;
-    width: 260px !important;
+    width: $sb-sidebar-width !important;
   }
 
   @media (min-width: 769px) {
@@ -182,8 +181,8 @@ $sb-mobile-topbar-h: 60px;
     border: 1px solid $sb-border;
     color: $sb-text2;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 10px;
+    padding: 7px;
+    border-radius: 9px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -200,7 +199,7 @@ $sb-mobile-topbar-h: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
+  padding: 0 12px;
   border-bottom: 1px solid $sb-border;
   flex-shrink: 0;
   position: relative;
@@ -211,16 +210,16 @@ $sb-mobile-topbar-h: 60px;
 .hb-sidebar__logo-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 // ── Navigation container ──────────────────────────────────────────────────────
 .hb-sidebar__nav {
   flex: 1;
-  padding: 20px 10px;
+  padding: 16px 8px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
@@ -234,17 +233,17 @@ $sb-mobile-topbar-h: 60px;
 
 // ── Nav section ───────────────────────────────────────────────────────────────
 .hb-sidebar__section {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .hb-sidebar__section-label {
   font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 600;
   color: $sb-text3;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  padding: 8px 12px 6px;
+  padding: 6px 8px 5px;
 }
 
 // ── Tooltip for collapsed state ───────────────────────────────────────────────
@@ -283,10 +282,10 @@ $sb-mobile-topbar-h: 60px;
 .hb-nav-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 11px 12px;
-  border-radius: 10px;
-  font-size: 13.5px;
+  gap: 10px;
+  padding: 9px 8px;
+  border-radius: 9px;
+  font-size: 12.5px;
   font-weight: 500;
   color: $sb-text2;
   background: transparent;
@@ -296,13 +295,13 @@ $sb-mobile-topbar-h: 60px;
   text-align: left;
   font-family: inherit;
   position: relative;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 
   &__icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 18px;
+    width: 16px;
     flex-shrink: 0;
     opacity: 0.6;
     transition: all 0.2s ease;
@@ -317,11 +316,11 @@ $sb-mobile-topbar-h: 60px;
 
   &__badge {
     font-family: "JetBrains Mono", monospace;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 600;
     background: rgba(59, 130, 246, 0.1);
     color: $sb-accent;
-    padding: 2px 8px;
+    padding: 2px 6px;
     border-radius: 20px;
     border: 1px solid rgba(59, 130, 246, 0.25);
   }
@@ -330,21 +329,19 @@ $sb-mobile-topbar-h: 60px;
     position: absolute;
     top: 8px;
     right: 8px;
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     background: $sb-accent;
     border-radius: 50%;
     box-shadow: 0 0 6px rgba(59, 130, 246, 0.6);
   }
 
-  // Softer indicator glow — 0.6 alpha read as neon against the dark bg.
-  // box-shadow pulse (not filter:blur) is cheap to animate — no repaint cost.
   &__indicator {
     position: absolute;
     left: 0;
     top: 6px;
     bottom: 6px;
-    width: 3.5px;
+    width: 3px;
     background: $sb-accent;
     border-radius: 0 4px 4px 0;
     animation: indicatorPulse 2.4s ease-in-out infinite;
@@ -384,12 +381,12 @@ $sb-mobile-topbar-h: 60px;
 .hb-sidebar__divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-  margin: 12px 0;
+  margin: 10px 0;
 }
 
 // ── Footer ────────────────────────────────────────────────────────────────────
 .hb-sidebar__footer {
-  padding: 0 10px 20px;
+  padding: 0 8px 16px;
   flex-shrink: 0;
   position: relative;
   z-index: 1;
@@ -399,16 +396,16 @@ $sb-mobile-topbar-h: 60px;
 .hb-profile {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px;
-  border-radius: 12px;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 11px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.04);
   cursor: pointer;
   width: 100%;
   text-align: left;
   font-family: inherit;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   transition: all 0.2s ease;
 
   &:hover {
@@ -416,18 +413,17 @@ $sb-mobile-topbar-h: 60px;
     border-color: rgba(255, 255, 255, 0.08);
   }
 
-  // Flattened avatar — a gradient badge reads dated next to an otherwise flat UI
   &__avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
     background: rgba(59, 130, 246, 0.14);
     border: 1px solid rgba(59, 130, 246, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: "JetBrains Mono", monospace;
-    font-size: 11px;
+    font-size: 9.5px;
     font-weight: 700;
     color: #5b9df9;
     flex-shrink: 0;
@@ -440,7 +436,7 @@ $sb-mobile-topbar-h: 60px;
   }
 
   &__name {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     color: $sb-text1;
     white-space: nowrap;
@@ -451,9 +447,9 @@ $sb-mobile-topbar-h: 60px;
 
   &__role {
     font-family: "JetBrains Mono", monospace;
-    font-size: 10px;
+    font-size: 9px;
     color: $sb-text2;
-    margin-top: 2px;
+    margin-top: 1px;
     text-transform: capitalize;
   }
 
@@ -476,13 +472,13 @@ $sb-mobile-topbar-h: 60px;
 .hb-logout {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 12px;
-  border-radius: 10px;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 9px;
   background: transparent;
   border: 1px solid transparent;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: $sb-text2;
   width: 100%;
@@ -507,12 +503,12 @@ $sb-mobile-topbar-h: 60px;
   }
 }
 
-// ── Layout helper (dynamic margins preventing content overlap) ────────────────
+// ── Layout helper ─────────────────────────────────────────────────────────────
 .hb-page-with-sidebar {
   min-height: 100vh;
   background: $sb-bg;
   transition: margin-left 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  margin-left: 260px;
+  margin-left: $sb-sidebar-width;
 
   @media (max-width: 768px) {
     margin-left: 0;
@@ -522,7 +518,7 @@ $sb-mobile-topbar-h: 60px;
 
 body.sidebar-is-collapsed {
   .hb-page-with-sidebar {
-    margin-left: 76px;
+    margin-left: 68px;
 
     @media (max-width: 768px) {
       margin-left: 0;
@@ -532,7 +528,7 @@ body.sidebar-is-collapsed {
 
 body.sidebar-is-expanded {
   .hb-page-with-sidebar {
-    margin-left: 260px;
+    margin-left: $sb-sidebar-width;
 
     @media (max-width: 768px) {
       margin-left: 0;

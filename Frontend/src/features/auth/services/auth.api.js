@@ -149,7 +149,7 @@ export async function logout() {
  */
 export async function getMe() {
   try {
-    const { data } = await api.get("/api/auth/me");
+    const { data } = await api.get("/auth/me");
     return data;
   } catch {
     return null;
@@ -157,12 +157,12 @@ export async function getMe() {
 }
 
 export async function updateProfile(profileData) {
-  const { data } = await api.put("/api/auth/profile", profileData);
+  const { data } = await api.put("/auth/profile", profileData);
   return data;
 }
 
 export async function changePassword({ currentPassword, newPassword }) {
-  const { data } = await api.put("/api/auth/change-password", {
+  const { data } = await api.put("/auth/change-password", {
     currentPassword,
     newPassword,
   });
@@ -171,12 +171,12 @@ export async function changePassword({ currentPassword, newPassword }) {
 
 // CORRECT:
 export const forgotPassword = async ({ email }) => {
-  const { data } = await api.post("/api/auth/forgot-password", { email });
+  const { data } = await api.post("/auth/forgot-password", { email });
   return data;
 };
 
 export const resetPassword = async ({ token, userId, newPassword }) => {
-  const { data } = await api.post("/api/auth/reset-password", {
+  const { data } = await api.post("/auth/reset-password", {
     token,
     userId,
     newPassword,
