@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 const http = axios.create({
   baseURL: API,
@@ -11,30 +11,30 @@ const http = axios.create({
 
 /** GET /api/jobs/recruiter/my-jobs  →  Job[] */
 export const getMyJobs = async () => {
-  const { data } = await http.get("/api/jobs/recruiter/my-jobs");
+  const { data } = await http.get("/jobs/recruiter/my-jobs");
   return Array.isArray(data) ? data : (data.jobs ?? []);
 };
 
 /** POST /api/jobs  →  Job */
 export const createJob = async (payload) => {
-  const { data } = await http.post("/api/jobs", payload);
+  const { data } = await http.post("/jobs", payload);
   return data;
 };
 
 /** PUT /api/jobs/:id  →  Job */
 export const updateJob = async (id, payload) => {
-  const { data } = await http.put(`/api/jobs/${id}`, payload);
+  const { data } = await http.put(`/jobs/${id}`, payload);
   return data;
 };
 
 /** DELETE /api/jobs/:id  →  void */
 export const deleteJob = async (id) => {
-  await http.delete(`/api/jobs/${id}`);
+  await http.delete(`/jobs/${id}`);
 };
 
 /** POST /api/jobs/enhance  →  { enhancedDescription, suggestedSkills, suggestedTitle } */
 export const enhanceJobDescription = async (payload) => {
-  const { data } = await http.post("/api/jobs/enhance", payload);
+  const { data } = await http.post("/jobs/enhance", payload);
   return data;
 };
 
@@ -46,7 +46,7 @@ export const enhanceJobDescription = async (payload) => {
  * Shape: Application[] with populated applicant + resume refs.
  */
 export const getApplicantsByJob = async (jobId) => {
-  const { data } = await http.get(`/api/applications/job/${jobId}`);
+  const { data } = await http.get(`/applications/job/${jobId}`);
   return Array.isArray(data) ? data : (data.applications ?? []);
 };
 
@@ -63,7 +63,7 @@ export const updateApplicationStatus = async (
   const body = { status };
   if (recruiterNote !== undefined) body.recruiterNote = recruiterNote;
   const { data } = await http.put(
-    `/api/applications/${applicationId}/status`,
+    `/applications/${applicationId}/status`,
     body,
   );
   return data;
@@ -73,6 +73,6 @@ export const updateApplicationStatus = async (
 
 /** GET /api/applications/recruiter/stats  →  stats object */
 export const getRecruiterStats = async () => {
-  const { data } = await http.get("/api/applications/recruiter/stats");
+  const { data } = await http.get("/applications/recruiter/stats");
   return data;
 };
