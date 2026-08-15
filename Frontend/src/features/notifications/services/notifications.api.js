@@ -1,9 +1,11 @@
 import axios from "axios";
 
-const BASE = (import.meta.env.VITE_API_URL || "http://localhost:3000").replace(/\/$/, "");
+const BASE = (
+  import.meta.env.VITE_API_URL || "http://localhost:3000/api"
+).replace(/\/$/, "");
 
 const API = axios.create({
-  baseURL: `${BASE}/api/notifications`,
+  baseURL: `${BASE}/notifications`,
   withCredentials: true,
 });
 

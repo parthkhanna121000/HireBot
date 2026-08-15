@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const ax = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
   withCredentials: true,
 });
 
@@ -27,7 +27,7 @@ export async function getAllJobs({
   if (salaryMin) params.set("salaryMin", salaryMin);
   if (salaryMax) params.set("salaryMax", salaryMax);
 
-  const { data } = await ax.get(`/api/jobs?${params}`);
+  const { data } = await ax.get(`/jobs?${params}`);
   return data; // { jobs, pagination: { total, page, limit, totalPages } }
 }
 
@@ -36,7 +36,7 @@ export async function getAllJobs({
  * Fetch a single job by ID
  */
 export async function getJobById(jobId) {
-  const { data } = await ax.get(`/api/jobs/${jobId}`);
+  const { data } = await ax.get(`/jobs/${jobId}`);
   return data.job ?? data;
 }
 
@@ -47,7 +47,7 @@ export async function getJobById(jobId) {
  * AI-matched jobs for the logged-in jobseeker based on their skills
  */
 export async function getRecommendedJobs() {
-  const { data } = await ax.get("/api/jobs/recommended");
+  const { data } = await ax.get("/jobs/recommended");
   return data.jobs ?? data;
 }
 
@@ -64,7 +64,7 @@ export async function applyToJob(jobId, pdfFile) {
   const formData = new FormData();
   formData.append("resume", pdfFile); // field name must match Multer config: upload.single("resume")
 
-  const { data } = await ax.post(`/api/applications/apply/${jobId}`, formData, {
+  const { data } = await ax.post(`/applications/apply/${jobId}`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return data; // { message, application: { matchScore, status, ... } }
@@ -75,6 +75,6 @@ export async function applyToJob(jobId, pdfFile) {
  * All applications for the logged-in jobseeker
  */
 export async function getMyApplications() {
-  const { data } = await ax.get("/api/applications/my");
+  const { data } = await ax.get("/applications/my");
   return Array.isArray(data) ? data : (data.applications ?? []);
 }
