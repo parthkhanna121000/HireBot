@@ -131,7 +131,7 @@ function ProfileTab({ user, onSave }) {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await ax.put("/api/user/profile", form);
+      await ax.put("/user/profile", form);
       setToast({ msg: "Profile saved successfully!", type: "success" });
       onSave?.();
     } catch {
@@ -228,7 +228,7 @@ function SecurityTab() {
     }
     setSaving(true);
     try {
-      await ax.put("/api/user/password", { current: form.current, password: form.next });
+      await ax.put("/user/password", { current: form.current, password: form.next });
       setToast({ msg: "Password updated!", type: "success" });
       setForm({ current: "", next: "", confirm: "" });
     } catch {
@@ -519,13 +519,13 @@ export default function Settings() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    ax.get("/api/auth/me")
+    ax.get("/auth/me")
       .then((r) => setUser(r.data.user))
       .catch(() => navigate("/login"));
   }, []);
 
   const onNav = (id) => navigate(`/${id}`);
-  const onLogout = () => ax.get("/api/auth/logout").finally(() => navigate("/login"));
+  const onLogout = () => ax.get("/auth/logout").finally(() => navigate("/login"));
 
   const activeTab = TABS.find((t) => t.id === tab);
 

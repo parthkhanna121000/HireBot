@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -6,7 +5,7 @@ import Sidebar from "../../shared/Sidebar";   // ← unified sidebar
 import "../styles/dashboard.scss";
 
 const ax = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
   withCredentials: true,
 });
 
@@ -287,10 +286,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     Promise.allSettled([
-      ax.get("/api/auth/me"),
-      ax.get("/api/resume?limit=1"),
-      ax.get("/api/applications/my"),
-      ax.get("/api/interview"),
+      ax.get("/auth/me"),
+      ax.get("/resume?limit=1"),
+      ax.get("/applications/my"),
+      ax.get("/interview"),
     ]).then(([u, r, a, i]) => {
       if (u.status === "fulfilled") setUser(u.value.data.user || u.value.data);
       if (r.status === "fulfilled") {

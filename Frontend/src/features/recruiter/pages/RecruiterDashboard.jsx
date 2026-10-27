@@ -4,7 +4,7 @@ import axios from "axios";
 import HireBotLogo from "../../shared/Logo";
 import "../styles/recruiter.scss";
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 // ─── Icons ────────────────────────────────────────────────────────
 const Icon = {
@@ -519,7 +519,7 @@ export default function RecruiterDashboard() {
 
   const fetchUser = useCallback(async () => {
     try {
-      const { data } = await axios.get(`${API}/api/auth/me`, { withCredentials: true });
+      const { data } = await axios.get(`${API}/auth/me`, { withCredentials: true });
       setUser(data.user ?? data);
     } catch { }
   }, []);
@@ -527,7 +527,7 @@ export default function RecruiterDashboard() {
   const fetchStats = useCallback(async () => {
     setLoadingStats(true);
     try {
-      const { data } = await axios.get(`${API}/api/applications/recruiter/stats`, { withCredentials: true });
+      const { data } = await axios.get(`${API}/applications/recruiter/stats`, { withCredentials: true });
       setStats(data);
     } catch { setStats(null); }
     finally { setLoadingStats(false); }
@@ -537,7 +537,7 @@ export default function RecruiterDashboard() {
     setLoadingJobs(true);
     setErrorJobs(false);
     try {
-      const { data } = await axios.get(`${API}/api/jobs/recruiter/my-jobs`, { withCredentials: true });
+      const { data } = await axios.get(`${API}/jobs/recruiter/my-jobs`, { withCredentials: true });
       setJobs(Array.isArray(data) ? data : data.jobs ?? []);
     } catch { setErrorJobs(true); }
     finally { setLoadingJobs(false); }
@@ -553,7 +553,7 @@ export default function RecruiterDashboard() {
   };
 
   const handleLogout = async () => {
-    try { await axios.get(`${API}/api/auth/logout`, { withCredentials: true }); }
+    try { await axios.get(`${API}/auth/logout`, { withCredentials: true }); }
     finally { navigate("/login"); }
   };
 

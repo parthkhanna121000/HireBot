@@ -429,7 +429,7 @@ export default function JobsPage() {
 
   // Auth check + user fetch (for Sidebar)
   useEffect(() => {
-    ax.get("/api/auth/me")
+    ax.get("/auth/me")
       .then((res) => { setIsLoggedIn(true); setUser(res.data.user ?? res.data); })
       .catch(() => setIsLoggedIn(false));
   }, []);

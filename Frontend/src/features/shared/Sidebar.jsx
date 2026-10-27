@@ -120,7 +120,7 @@ export default function Sidebar({ user }) {
   }, [mobileOpen]);
 
   const handleLogout = async () => {
-    try { await ax.get("/api/auth/logout"); } catch { /* ignore */ }
+    try { await ax.get("/auth/logout"); } catch { /* ignore */ }
     navigate("/login");
   };
 

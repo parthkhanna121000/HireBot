@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/post-job.scss";
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 const JOB_TYPES = ["full-time", "part-time", "contract", "internship"];
 const EXP_LEVELS = ["fresher", "junior", "mid", "senior", "lead"];
 
@@ -52,7 +52,7 @@ export default function PostJobForm() {
     if (!form.title || !form.description) { setError("Add a title and description first."); return; }
     setEnhancing(true); setError("");
     try {
-      const { data } = await axios.post(`${API}/api/jobs/enhance`,
+      const { data } = await axios.post(`${API}/jobs/enhance`,
         { title: form.title, description: form.description, requiredSkills: form.requiredSkills, experienceLevel: form.experienceLevel },
         { withCredentials: true }
       );
@@ -82,7 +82,7 @@ export default function PostJobForm() {
     }
     setSubmitting(true); setError("");
     try {
-      await axios.post(`${API}/api/jobs`,
+      await axios.post(`${API}/jobs`,
         { ...form, salaryMin: form.salaryMin ? Number(form.salaryMin) : undefined, salaryMax: form.salaryMax ? Number(form.salaryMax) : undefined },
         { withCredentials: true }
       );
