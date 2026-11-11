@@ -1,435 +1,529 @@
-@import url("https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
 
-// ── Tokens — mirrors landing.scss ─────────────────────────────────────────────
-$c-void:     #030308;
-$c-deep:     #07070f;
-$c-surface:  #0e0e1a;
-$c-surface2: #141422;
-$c-surface3: #1a1a2e;
+// ── Tokens — same system as the landing page ──────────────────────────────────
+$paper: #f5f2e9;
+$white: #fffefa;
+$ink: #171a24;
+$blue: #3158ed;
+$lime: #d8f36a;
+$muted: #666a73;
+$line: rgba(23, 26, 36, 0.14);
 
-$c-indigo:   #4f46e5;
-$c-indigo2:  #6366f1;
-$c-violet:   #7c3aed;
-$c-sky:      #0ea5e9;
-$c-emerald:  #10b981;
-$c-amber:    #f59e0b;
+$ok: #3b7d34;
+$warn: #9a6b00;
+$bad: #b42318;
+$bad-bg: #f6e4e4;
 
-$c-border:   rgba(255,255,255,0.055);
-$c-border2:  rgba(255,255,255,0.10);
-$c-border3:  rgba(255,255,255,0.16);
+$sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+$serif: Georgia, "Times New Roman", serif;
 
-$c-text1:    #f4f4ff;
-$c-text2:    #8888b0;
-$c-text3:    #44445a;
-$c-text4:    #2a2a40;
-
-$c-error:        #f43f5e;
-$c-error-dim:    rgba(244,63,94,0.08);
-$c-error-border: rgba(244,63,94,0.2);
-
-$font-display: "Cabinet Grotesk", sans-serif;
-$font-serif:   "Instrument Serif", serif;
-$font-mono:    "JetBrains Mono", monospace;
+$ease: cubic-bezier(0.22, 1, 0.36, 1);
 
 // ── Keyframes ─────────────────────────────────────────────────────────────────
-@keyframes hb-reg-slide-down {
-  from { opacity: 0; transform: translateY(-18px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes hb-reg-slide-up {
+@keyframes hb-reg-rise {
   from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes hb-reg-fade-up {
-  from { opacity: 0; transform: translateY(22px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes hb-reg-spin {
   to { transform: rotate(360deg); }
 }
-@keyframes hb-reg-badge-pulse {
-  0%,100% { opacity: 1; }
-  50%      { opacity: 0.35; }
-}
-@keyframes hb-reg-grid-move {
-  from { transform: translateY(0); }
-  to   { transform: translateY(60px); }
-}
 
-// ── Root — locked viewport ─────────────────────────────────────────────────────
+// ── Root ──────────────────────────────────────────────────────────────────────
 .hb-reg-root {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
-  background: $c-void;
-  font-family: $font-display;
-  color: $c-text1;
-  overflow: hidden;
-  position: relative;
-
-  &::before {
-    content: "";
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    background-size: 200px 200px;
-    pointer-events: none; z-index: 0; opacity: 0.55;
-  }
+  background: $paper;
+  font-family: $sans;
+  color: $ink;
 }
 
-// ── Loading ────────────────────────────────────────────────────────────────────
+.hb-reg-brand-name {
+  font-size: 20px;
+  font-weight: 850;
+  letter-spacing: -0.05em;
+  color: inherit;
+}
+
+// ── Loading ───────────────────────────────────────────────────────────────────
 .hb-reg-loading {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 1rem; height: 100vh; width: 100%;
-  p { font-size: 13px; color: $c-text3; font-family: $font-display; }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 100vh;
+  width: 100%;
+
+  p { font-size: 13px; color: $muted; }
 }
 
 .hb-reg-spinner {
-  width: 22px; height: 22px;
-  border: 2px solid rgba(99,102,241,0.18);
-  border-top-color: $c-indigo2;
+  width: 22px;
+  height: 22px;
+  border: 2px solid $line;
+  border-top-color: $blue;
   border-radius: 50%;
   animation: hb-reg-spin 0.75s linear infinite;
 }
 
-// ── Left panel ─────────────────────────────────────────────────────────────────
+// ── Left panel (dark ink, like the story section) ─────────────────────────────
 .hb-reg-left {
-  width: 46%; height: 100vh;
-  position: relative; display: flex; flex-direction: column;
-  overflow: hidden; background: $c-surface; flex-shrink: 0;
-  border-right: 1px solid $c-border;
+  width: 44%;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  flex-shrink: 0;
+  background: $ink;
+  color: $paper;
+  overflow: hidden;
 
+  // masked dot grid
   &::before {
-    content: ""; position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(99,102,241,0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(99,102,241,0.05) 1px, transparent 1px);
-    background-size: 60px 60px;
-    animation: hb-reg-grid-move 9s linear infinite;
-    pointer-events: none; z-index: 0;
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(245, 242, 233, 0.16) 1px, transparent 1px);
+    background-size: 24px 24px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 30% 35%, #000 20%, transparent 75%);
+    mask-image: radial-gradient(ellipse 80% 70% at 30% 35%, #000 20%, transparent 75%);
+    pointer-events: none;
   }
 
+  // soft blue glow
   &::after {
-    content: ""; position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 100% 60% at 50% 105%, $c-surface 25%, transparent 60%),
-      radial-gradient(ellipse 80% 60% at 15% 10%, rgba(79,70,229,0.15) 0%, transparent 55%),
-      radial-gradient(ellipse 60% 50% at 88% 82%, rgba(124,58,237,0.1) 0%, transparent 55%);
-    pointer-events: none; z-index: 0;
+    content: "";
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    right: -140px;
+    bottom: -140px;
+    background: $blue;
+    opacity: 0.28;
+    filter: blur(110px);
+    border-radius: 50%;
+    pointer-events: none;
   }
 }
 
 .hb-reg-left-inner {
-  position: relative; z-index: 1;
-  display: flex; flex-direction: column;
-  height: 100%; padding: 2.5rem;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 2.5rem 3rem;
 }
 
 .hb-reg-brand {
-  flex-shrink: 0;
-  animation: hb-reg-slide-down 0.6s cubic-bezier(0.22,1,0.36,1) both;
+  align-self: flex-start;
+  color: $paper;
+  text-decoration: none;
 }
 
 .hb-reg-hero {
-  flex: 1; display: flex; flex-direction: column;
-  justify-content: center; gap: 1rem;
-  padding: 1.25rem 0; min-height: 0;
-}
-
-.hb-reg-eyebrow {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: rgba(99,102,241,0.1);
-  border: 1px solid rgba(99,102,241,0.22);
-  color: #a5b4fc; border-radius: 40px;
-  padding: 5px 16px; font-size: 11px; font-weight: 600;
-  letter-spacing: 0.3px; width: fit-content;
-  animation: hb-reg-slide-up 0.6s 0.1s cubic-bezier(0.22,1,0.36,1) both;
-
-  .hb-reg-badge-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: $c-indigo2; animation: hb-reg-badge-pulse 2s infinite;
-    box-shadow: 0 0 6px $c-indigo2;
-  }
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.25rem;
+  min-height: 0;
 }
 
 .hb-reg-headline {
-  font-family: $font-display;
-  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
-  font-weight: 900; line-height: 1.08; letter-spacing: -0.9px; color: $c-text1;
-  animation: hb-reg-slide-up 0.6s 0.15s cubic-bezier(0.22,1,0.36,1) both;
+  font-size: clamp(2rem, 3.4vw, 3.1rem);
+  font-weight: 850;
+  line-height: 1.02;
+  letter-spacing: -0.07em;
+  max-width: 460px;
+  animation: hb-reg-rise 0.7s $ease both;
 
   em {
-    font-style: italic; font-family: $font-serif;
-    background: linear-gradient(135deg, $c-indigo2 0%, $c-violet 50%, $c-sky 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    display: block;
+    font-family: $serif;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    color: $lime;
   }
 }
 
 .hb-reg-desc {
-  font-size: 13px; color: $c-text2; line-height: 1.8; max-width: 320px;
-  animation: hb-reg-slide-up 0.6s 0.2s cubic-bezier(0.22,1,0.36,1) both;
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(245, 242, 233, 0.66);
+  max-width: 380px;
 }
 
-// ── Step list ─────────────────────────────────────────────────────────────────
+// ── Steps (a real sequence, so numbered) ──────────────────────────────────────
 .hb-reg-steps {
-  display: flex; flex-direction: column; gap: 10px;
-  animation: hb-reg-slide-up 0.6s 0.25s cubic-bezier(0.22,1,0.36,1) both;
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  max-width: 380px;
+  border-top: 1px solid rgba(245, 242, 233, 0.16);
 }
 
-.hb-reg-step { display: flex; align-items: flex-start; gap: 11px; }
+.hb-reg-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(245, 242, 233, 0.16);
+}
 
 .hb-reg-step-num {
-  width: 24px; height: 24px; border-radius: 7px;
-  background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.22);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 800; color: #a5b4fc;
-  font-family: $font-mono; flex-shrink: 0; margin-top: 1px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: $lime;
+  color: $ink;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
 }
 
-.hb-reg-step-body { display: flex; flex-direction: column; gap: 1px; }
-.hb-reg-step-title { font-size: 12.5px; font-weight: 700; color: $c-text1; }
-.hb-reg-step-desc  { font-size: 11.5px; color: $c-text3; line-height: 1.5; }
-
-// ── Testimonial ───────────────────────────────────────────────────────────────
-.hb-reg-testimonial {
-  padding: 1rem 1.15rem;
-  background: $c-surface2; border: 1px solid $c-border;
-  border-radius: 14px; flex-shrink: 0;
-  animation: hb-reg-slide-up 0.6s 0.35s cubic-bezier(0.22,1,0.36,1) both;
-  position: relative; overflow: hidden;
-
-  &::before {
-    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(99,102,241,0.4), transparent);
-  }
+.hb-reg-step-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: $paper;
 }
 
-.hb-reg-quote {
-  font-size: 12.5px; color: $c-text2; line-height: 1.65;
-  margin-bottom: 9px; font-style: italic; font-family: $font-serif;
-  &::before { content: '"'; color: $c-indigo2; font-size: 16px; font-style: normal; }
-  &::after  { content: '"'; color: $c-indigo2; font-size: 16px; font-style: normal; }
+.hb-reg-step-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(245, 242, 233, 0.58);
+  margin-top: 2px;
 }
 
-.hb-reg-author { display: flex; align-items: center; gap: 9px; }
-
-.hb-reg-avatar {
-  width: 28px; height: 28px; border-radius: 50%;
-  background: linear-gradient(135deg, $c-indigo, $c-violet);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 800; color: #fff; flex-shrink: 0;
+.hb-reg-note {
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(245, 242, 233, 0.5);
+  max-width: 380px;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(245, 242, 233, 0.16);
 }
 
-.hb-reg-author-info { display: flex; flex-direction: column; gap: 1px; }
-.hb-reg-author-name { font-size: 11.5px; font-weight: 700; color: $c-text1; }
-.hb-reg-author-role { font-size: 10px; color: $c-text3; }
-
-// ── Right panel ────────────────────────────────────────────────────────────────
+// ── Right panel (paper) ───────────────────────────────────────────────────────
 .hb-reg-right {
-  flex: 1; height: 100vh;
-  display: flex; align-items: center; justify-content: center;
-  padding: 2rem; position: relative; background: $c-void; overflow-y: auto;
-
-  &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-track { background: transparent; }
-  &::-webkit-scrollbar-thumb { background: $c-border2; border-radius: 2px; }
-
-  &::before {
-    content: ""; position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(79,70,229,0.07) 0%, transparent 65%);
-    pointer-events: none; z-index: 0;
-  }
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 2rem;
+  background: $paper;
 }
 
-// ── Form card ─────────────────────────────────────────────────────────────────
 .hb-reg-card {
-  width: 100%; max-width: 420px; position: relative; z-index: 1;
-  padding: 0.5rem 0;
-  animation: hb-reg-fade-up 0.7s 0.1s cubic-bezier(0.22,1,0.36,1) both;
+  width: 100%;
+  max-width: 420px;
+  animation: hb-reg-rise 0.7s 0.05s $ease both;
 }
 
-.hb-reg-card-logo { display: none; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
+.hb-reg-card-logo {
+  display: none;
+  margin-bottom: 1.75rem;
+  color: $ink;
+  text-decoration: none;
+}
 
-.hb-reg-card-header { margin-bottom: 1.5rem; }
+.hb-reg-card-header { margin-bottom: 1.75rem; }
 
 .hb-reg-card-title {
-  font-family: $font-display;
-  font-size: 26px; font-weight: 900; color: $c-text1;
-  letter-spacing: -0.6px; margin-bottom: 5px;
+  font-size: 32px;
+  font-weight: 850;
+  letter-spacing: -0.06em;
+  line-height: 1.05;
+  margin-bottom: 8px;
 }
 
-.hb-reg-card-sub { font-size: 13.5px; color: $c-text3; line-height: 1.6; }
+.hb-reg-card-sub {
+  font-size: 15px;
+  color: $muted;
+  line-height: 1.6;
+}
 
 // ── Role selector ─────────────────────────────────────────────────────────────
 .hb-reg-roles {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.25rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 1.5rem;
 }
 
 .hb-reg-role {
-  display: flex; flex-direction: column; align-items: center; gap: 7px;
-  padding: 14px 10px; background: $c-surface;
-  border: 1.5px solid $c-border; border-radius: 14px;
-  cursor: pointer; transition: all 0.2s ease; position: relative; overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 13px 15px;
+  background: $white;
+  border: 1px solid $line;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  font-family: $sans;
+  color: $ink;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
 
-  &::before {
-    content: ""; position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(79,70,229,0.07), transparent);
-    opacity: 0; transition: opacity 0.2s ease;
-  }
-
-  &:hover {
-    border-color: rgba(99,102,241,0.3); background: $c-surface2;
-    transform: translateY(-2px);
-    &::before { opacity: 1; }
-  }
+  &:hover { border-color: rgba(23, 26, 36, 0.4); }
 
   &.active {
-    border-color: rgba(99,102,241,0.5); background: rgba(99,102,241,0.1);
-    box-shadow: 0 0 0 3px rgba(79,70,229,0.08), 0 4px 16px rgba(79,70,229,0.12);
-    &::before { opacity: 1; }
-    .hb-reg-role-label { color: #a5b4fc; }
-    .hb-reg-role-check { opacity: 1; transform: scale(1); }
+    background: $ink;
+    border-color: $ink;
+    color: $paper;
+
+    .hb-reg-role-hint { color: rgba(245, 242, 233, 0.66); }
   }
 }
 
-.hb-reg-role-icon  { font-size: 20px; line-height: 1; }
-.hb-reg-role-label { font-size: 12.5px; font-weight: 700; color: $c-text2; transition: color 0.2s ease; }
-
-.hb-reg-role-check {
-  position: absolute; top: 7px; right: 7px;
-  width: 15px; height: 15px; background: $c-indigo; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; transform: scale(0.6);
-  transition: all 0.2s cubic-bezier(0.22,1,0.36,1);
-  &::after { content: "✓"; font-size: 8px; color: #fff; font-weight: 800; }
+.hb-reg-role-label {
+  font-size: 14px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
 }
 
-// ── Divider ────────────────────────────────────────────────────────────────────
-.hb-reg-divider {
-  display: flex; align-items: center; gap: 12px;
-  margin-bottom: 1.1rem; font-size: 11.5px; color: $c-text4; font-weight: 500;
-  &::before, &::after { content: ""; flex: 1; height: 1px; background: $c-border; }
+.hb-reg-role-hint {
+  font-size: 12px;
+  color: $muted;
+  transition: color 0.2s ease;
 }
 
-// ── Form fields ────────────────────────────────────────────────────────────────
-.hb-reg-field { margin-bottom: 0.875rem; }
+// ── Form fields ───────────────────────────────────────────────────────────────
+.hb-reg-field { margin-bottom: 1rem; }
 
 .hb-reg-label {
-  display: block; font-size: 10.5px; font-weight: 700;
-  color: $c-text3; margin-bottom: 6px;
-  text-transform: uppercase; letter-spacing: 0.8px; font-family: $font-mono;
+  display: block;
+  font-size: 13px;
+  font-weight: 650;
+  color: $ink;
+  margin-bottom: 6px;
 }
 
 .hb-reg-input-wrap {
-  position: relative; display: flex; align-items: center;
-  &:focus-within .hb-reg-input-icon { color: $c-indigo2; }
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &:focus-within .hb-reg-input-icon { color: $blue; }
 }
 
 .hb-reg-input-icon {
-  position: absolute; left: 13px; width: 15px; height: 15px; color: $c-text3;
-  display: flex; align-items: center; justify-content: center;
-  pointer-events: none; transition: color 0.2s ease;
+  position: absolute;
+  left: 14px;
+  width: 16px;
+  height: 16px;
+  color: $muted;
+  display: flex;
+  pointer-events: none;
+  transition: color 0.2s ease;
+
   svg { width: 100%; height: 100%; }
 }
 
 .hb-reg-input {
-  width: 100%; background: $c-surface; border: 1px solid $c-border;
-  border-radius: 11px; color: $c-text1; font-size: 13.5px; font-family: $font-display;
-  padding: 11px 13px 11px 39px; outline: none; transition: all 0.2s ease;
-  &::placeholder { color: $c-text4; }
+  width: 100%;
+  background: $white;
+  border: 1px solid $line;
+  border-radius: 12px;
+  color: $ink;
+  font-size: 15px;
+  font-family: $sans;
+  padding: 13px 14px 13px 42px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &::placeholder { color: rgba(102, 106, 115, 0.65); }
+
   &:focus {
-    background: rgba(99,102,241,0.05); border-color: rgba(99,102,241,0.4);
-    box-shadow: 0 0 0 3px rgba(99,102,241,0.1), inset 0 1px 0 rgba(255,255,255,0.02);
+    border-color: $blue;
+    box-shadow: 0 0 0 3px rgba(49, 88, 237, 0.16);
   }
-  &.has-action { padding-right: 42px; }
+
+  &.has-action { padding-right: 46px; }
 }
 
 .hb-reg-eye-btn {
-  position: absolute; right: 11px; background: none; border: none; cursor: pointer;
-  color: $c-text3; display: flex; align-items: center; justify-content: center;
-  padding: 4px; border-radius: 6px; transition: all 0.15s ease;
-  svg { width: 14px; height: 14px; }
-  &:hover { color: $c-text2; background: rgba(255,255,255,0.05); }
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $muted;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px;
+  border-radius: 8px;
+  transition: color 0.15s ease, background 0.15s ease;
+
+  svg { width: 16px; height: 16px; }
+
+  &:hover { color: $ink; background: rgba(23, 26, 36, 0.06); }
 }
 
-// ── Password strength ──────────────────────────────────────────────────────────
-.hb-reg-strength { margin-top: 7px; }
+// ── Password strength ─────────────────────────────────────────────────────────
+.hb-reg-strength {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 9px;
+}
 
 .hb-reg-strength-bars {
-  display: flex; gap: 4px; margin-bottom: 4px;
+  flex: 1;
+  display: flex;
+  gap: 4px;
 }
 
 .hb-reg-strength-bar {
-  flex: 1; height: 2.5px; border-radius: 4px;
-  background: rgba(255,255,255,0.07); transition: background 0.3s ease;
-  &.filled-1 { background: #ef4444; }
-  &.filled-2 { background: #f97316; }
-  &.filled-3 { background: $c-amber; }
-  &.filled-4 { background: $c-emerald; }
+  flex: 1;
+  height: 4px;
+  border-radius: 4px;
+  background: $line;
+  transition: background 0.3s ease;
+
+  &.filled-1 { background: $bad; }
+  &.filled-2 { background: #e0b84a; }
+  &.filled-3 { background: #6dbb65; }
+  &.filled-4 { background: $ok; }
 }
 
-.hb-reg-strength-label { font-size: 10.5px; font-weight: 600; font-family: $font-mono; }
+.hb-reg-strength-label {
+  font-size: 12px;
+  font-weight: 650;
+  min-width: 56px;
+  text-align: right;
+
+  &.s-0, &.s-1 { color: $bad; }
+  &.s-2 { color: $warn; }
+  &.s-3, &.s-4 { color: $ok; }
+}
 
 // ── Error ─────────────────────────────────────────────────────────────────────
 .hb-reg-error {
-  display: flex; align-items: center; gap: 8px;
-  padding: 9px 13px; background: $c-error-dim; border: 1px solid $c-error-border;
-  border-radius: 9px; font-size: 12.5px; color: #fda4af; margin-bottom: 0.875rem;
-  &::before { content: "⚠"; font-size: 12px; flex-shrink: 0; }
+  padding: 11px 14px;
+  background: $bad-bg;
+  border: 1px solid rgba(180, 35, 24, 0.22);
+  border-radius: 10px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: $bad;
+  margin-bottom: 1rem;
 }
 
-// ── Submit button ──────────────────────────────────────────────────────────────
+// ── Submit button (blue pill, lifts on hover) ─────────────────────────────────
 .hb-reg-btn-submit {
-  width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 12.5px;
-  background: linear-gradient(135deg, $c-indigo 0%, $c-violet 100%);
-  border: none; border-radius: 12px; font-size: 14px; font-weight: 800;
-  color: #fff; cursor: pointer; font-family: $font-display; letter-spacing: -0.1px;
-  transition: all 0.25s ease; position: relative; overflow: hidden;
-  margin-bottom: 0.875rem; box-shadow: 0 6px 24px rgba(79,70,229,0.38);
-
-  &::before {
-    content: ""; position: absolute; top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-    transition: left 0.45s ease;
-  }
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 15px 20px;
+  background: $blue;
+  border: none;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 750;
+  color: #fff;
+  cursor: pointer;
+  font-family: $sans;
+  letter-spacing: -0.01em;
+  margin-bottom: 1.1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
-    transform: translateY(-2px); box-shadow: 0 12px 36px rgba(79,70,229,0.55);
-    &::before { left: 100%; }
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px rgba(49, 88, 237, 0.3);
   }
-  &:active { transform: scale(0.99); }
-  &:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  &:active { transform: translateY(-1px); }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
 }
 
-// ── Terms ─────────────────────────────────────────────────────────────────────
+// ── Terms + footer ────────────────────────────────────────────────────────────
 .hb-reg-terms {
-  font-size: 11px; color: $c-text3; text-align: center;
-  margin-bottom: 0.875rem; line-height: 1.6;
-  a { color: $c-text2; text-decoration: none; transition: color 0.15s ease; &:hover { color: $c-text1; } }
+  font-size: 12.5px;
+  color: $muted;
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 1.1rem;
+
+  a {
+    color: $ink;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: $line;
+    transition: text-decoration-color 0.15s ease;
+
+    &:hover { text-decoration-color: $ink; }
+  }
 }
 
-// ── Footer ────────────────────────────────────────────────────────────────────
 .hb-reg-footer {
-  text-align: center; font-size: 13px; color: $c-text3;
-  a { color: $c-indigo2; text-decoration: none; font-weight: 700; transition: color 0.15s ease; &:hover { color: #818cf8; } }
+  text-align: center;
+  font-size: 14px;
+  color: $muted;
+  padding-top: 1.1rem;
+  border-top: 1px solid $line;
+
+  a {
+    color: $blue;
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; text-underline-offset: 3px; }
+  }
+}
+
+// ── Focus (keyboard) ──────────────────────────────────────────────────────────
+.hb-reg-root {
+  button:focus-visible,
+  a:focus-visible {
+    outline: 2px solid $blue;
+    outline-offset: 3px;
+  }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+@media (max-width: 1050px) {
+  .hb-reg-left-inner { padding: 2rem; }
 }
 
 @media (max-width: 900px) {
-  .hb-reg-root { height: auto; min-height: 100vh; overflow: auto; }
   .hb-reg-left { display: none; }
+
   .hb-reg-right {
-    height: auto; min-height: 100vh; overflow: visible;
-    background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(79,70,229,0.1) 0%, transparent 60%), $c-void;
-    align-items: flex-start; padding: 2.5rem 1.5rem;
+    align-items: flex-start;
+    padding: 2rem 1.5rem 3rem;
   }
-  .hb-reg-card-logo { display: flex; }
-  .hb-reg-card { max-width: 400px; margin: 0 auto; padding: 0; }
+
+  .hb-reg-card { margin: 0 auto; }
+  .hb-reg-card-logo { display: inline-block; }
 }
 
-@media (max-width: 480px) {
-  .hb-reg-right { padding: 1.75rem 1.25rem; }
-  .hb-reg-roles { grid-template-columns: 1fr 1fr; }
+@media (max-width: 390px) {
+  .hb-reg-right { padding: 1.5rem 1.1rem 2.5rem; }
+  .hb-reg-card-title { font-size: 28px; }
+  .hb-reg-roles { grid-template-columns: 1fr; }
+}
+
+// ── Reduced motion (keep last) ────────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  .hb-reg-root *,
+  .hb-reg-root *::before,
+  .hb-reg-root *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
