@@ -38,7 +38,7 @@ _Upload your resume → Get AI Score → Fix gaps → Apply smarter_
 <div align="center">
  
 ### 🏠 Landing Page
-![Landing Page](./assets/landing.png)
+![Landing Page](./assets/landing1.png)
 
 </div>
 
