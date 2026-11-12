@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Sidebar from "../../shared/Sidebar";   // ← unified sidebar
+import Sidebar from "../../shared/Sidebar";
 import "../styles/dashboard.scss";
 
 const ax = axios.create({
@@ -26,6 +26,7 @@ const Icon = {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const timeAgo = (date) => {
+  if (!date) return "";
   const diff = Math.floor((Date.now() - new Date(date)) / 1000);
   if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
@@ -33,7 +34,7 @@ const timeAgo = (date) => {
   return `${Math.floor(diff / 604800)}w ago`;
 };
 
-const scoreColor = (s) => s >= 75 ? "score--high" : s >= 50 ? "score--mid" : "score--low";
+const scoreColorClass = (s) => (s >= 75 ? "score--high" : s >= 50 ? "score--mid" : "score--low");
 
 const statusMeta = {
   applied:     { label: "Applied",     cls: "st--applied",     Icon: Icon.Clock },
@@ -50,13 +51,13 @@ const greetingByHour = () => {
 };
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
-function StatCard({ label, value, sub, accent, delay, onClick }) {
+function StatCard({ label, value, sub, tone, delay, onClick }) {
   return (
-    <div className={`stat-card stat-card--${accent}`} style={{ animationDelay: delay }} onClick={onClick}>
+    <div className={`stat-card stat-card--${tone}`} style={{ animationDelay: delay }} onClick={onClick}>
       <div className="stat-card__label">{label}</div>
       <div className="stat-card__value">{value ?? "—"}</div>
       {sub && <div className="stat-card__sub">{sub}</div>}
-      <div className="stat-card__bar" />
+      <div className="stat-card__arrow"><Icon.ArrowUpRight /></div>
     </div>
   );
 }
@@ -66,14 +67,14 @@ function ScoreRing({ score, size = 80 }) {
   const r = (size / 2) - 8;
   const circ = 2 * Math.PI * r;
   const dash = ((score || 0) / 100) * circ;
-  const color = score >= 75 ? "#1D9E75" : score >= 50 ? "#BA7517" : "#dc2626";
+  const color = score >= 75 ? "#16845B" : score >= 50 ? "#C27D1A" : "#D94B4B";
   return (
     <svg width={size} height={size} className="score-ring">
-      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="7"/>
-      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth="7"
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#EAE8E2" strokeWidth="6"/>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth="6"
         strokeDasharray={`${dash} ${circ}`} strokeDashoffset={circ / 4} strokeLinecap="round"
         style={{ transition: "stroke-dasharray 1s cubic-bezier(0.4,0,0.2,1)" }}/>
-      <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" fill={color} fontSize="16" fontWeight="700" fontFamily="'JetBrains Mono', monospace">
+      <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" fill={color} fontSize="15" fontWeight="700" fontFamily="inherit">
         {score ?? "—"}
       </text>
     </svg>
@@ -85,8 +86,8 @@ function ResumeCard({ resume, onNavigate }) {
   if (!resume) return (
     <div className="module-card module-card--empty" style={{ animationDelay: "0.15s" }}>
       <div className="module-card__empty-icon"><Icon.FileText /></div>
-      <div className="module-card__empty-title">No resume analyzed yet</div>
-      <div className="module-card__empty-sub">Upload your resume and a job description to get your AI hiring score</div>
+      <div className="module-card__empty-title">Your resume hasn't been analyzed yet.</div>
+      <div className="module-card__empty-sub">Upload your resume and a job description to discover your strengths, skill gaps, and hiring insights.</div>
       <button className="module-card__cta" onClick={() => onNavigate("/resume-analyzer")}>Analyze Resume <Icon.ArrowUpRight /></button>
     </div>
   );
@@ -101,22 +102,22 @@ function ResumeCard({ resume, onNavigate }) {
   return (
     <div className="module-card" style={{ animationDelay: "0.15s" }}>
       <div className="module-card__header">
-        <div className="module-card__title">Latest Resume Score</div>
-        <button className="module-card__link" onClick={() => onNavigate("/resume-analyzer")}>View full report <Icon.ArrowUpRight /></button>
+        <div className="module-card__title">Latest Resume Analysis</div>
+        <button className="module-card__link" onClick={() => onNavigate("/resume-analyzer")}>View Full Report <Icon.ArrowUpRight /></button>
       </div>
       <div className="resume-score-layout">
         <div className="resume-score-ring">
-          <ScoreRing score={resume.overallScore} size={96} />
-          <div className="resume-score-label">Overall</div>
+          <ScoreRing score={resume.overallScore} size={92} />
+          <div className="resume-score-label">Overall Score</div>
         </div>
         <div className="resume-score-bars">
           {scores.map(({ label, val }) => (
             <div className="score-bar-row" key={label}>
               <span className="score-bar-label">{label}</span>
               <div className="score-bar-track">
-                <div className="score-bar-fill" style={{ width: `${val||0}%`, background: val>=75?"#1D9E75":val>=50?"#BA7517":"#dc2626" }}/>
+                <div className="score-bar-fill" style={{ width: `${val||0}%`, background: val>=75?"#16845B":val>=50?"#C27D1A":"#D94B4B" }}/>
               </div>
-              <span className={`score-bar-val ${scoreColor(val)}`}>{val ?? 0}</span>
+              <span className={`score-bar-val ${scoreColorClass(val)}`}>{val ?? 0}</span>
             </div>
           ))}
         </div>
@@ -133,8 +134,8 @@ function ApplicationsCard({ applications, onNavigate }) {
   if (!applications?.length) return (
     <div className="module-card module-card--empty" style={{ animationDelay: "0.25s" }}>
       <div className="module-card__empty-icon"><Icon.Briefcase /></div>
-      <div className="module-card__empty-title">No applications yet</div>
-      <div className="module-card__empty-sub">Browse open roles and apply with your AI-analyzed resume</div>
+      <div className="module-card__empty-title">No applications found</div>
+      <div className="module-card__empty-sub">Browse open positions and apply with your AI-optimized resume profile</div>
       <button className="module-card__cta" onClick={() => onNavigate("/jobs")}>Browse Jobs <Icon.ArrowUpRight /></button>
     </div>
   );
@@ -143,7 +144,7 @@ function ApplicationsCard({ applications, onNavigate }) {
     <div className="module-card" style={{ animationDelay: "0.25s" }}>
       <div className="module-card__header">
         <div className="module-card__title">Recent Applications</div>
-        <button className="module-card__link" onClick={() => onNavigate("/applications")}>View all <Icon.ArrowUpRight /></button>
+        <button className="module-card__link" onClick={() => onNavigate("/applications")}>View All Applications <Icon.ArrowUpRight /></button>
       </div>
       <div className="app-list">
         {applications.slice(0, 5).map((app) => {
@@ -159,7 +160,7 @@ function ApplicationsCard({ applications, onNavigate }) {
                 </div>
               </div>
               <div className="app-row__right">
-                {app.matchScore > 0 && <span className={`app-score ${scoreColor(app.matchScore)}`}>{app.matchScore}%</span>}
+                {app.matchScore > 0 && <span className={`app-score ${scoreColorClass(app.matchScore)}`}>{app.matchScore}%</span>}
                 <span className={`app-status ${st.cls}`}><st.Icon />{st.label}</span>
               </div>
             </div>
@@ -175,9 +176,9 @@ function InterviewCard({ reports, onNavigate }) {
   if (!reports?.length) return (
     <div className="module-card module-card--empty" style={{ animationDelay: "0.35s" }}>
       <div className="module-card__empty-icon"><Icon.Bot /></div>
-      <div className="module-card__empty-title">No interview prep done</div>
-      <div className="module-card__empty-sub">Generate a full prep plan with AI-written model answers for any role</div>
-      <button className="module-card__cta" onClick={() => onNavigate("/interview-prep")}>Start Prep <Icon.ArrowUpRight /></button>
+      <div className="module-card__empty-title">Ready for your next interview?</div>
+      <div className="module-card__empty-sub">Generate role-specific technical questions, behavioral questions, and AI-written model answers.</div>
+      <button className="module-card__cta" onClick={() => onNavigate("/interview-prep")}>Start Interview Prep <Icon.ArrowUpRight /></button>
     </div>
   );
 
@@ -189,18 +190,18 @@ function InterviewCard({ reports, onNavigate }) {
   return (
     <div className="module-card" style={{ animationDelay: "0.35s" }}>
       <div className="module-card__header">
-        <div className="module-card__title">Interview Prep</div>
-        <button className="module-card__link" onClick={() => onNavigate("/interview-history")}>All reports <Icon.ArrowUpRight /></button>
+        <div className="module-card__title">Interview Preparation</div>
+        <button className="module-card__link" onClick={() => onNavigate("/interview-history")}>Prep History <Icon.ArrowUpRight /></button>
       </div>
       <div className="interview-latest">
         <div className="interview-latest__score">
-          <ScoreRing score={latest.matchScore} size={72} />
+          <ScoreRing score={latest.matchScore} size={68} />
           <div className="interview-latest__score-label">Match</div>
         </div>
         <div className="interview-latest__info">
           <div className="interview-latest__title">{latest.title || "Untitled Report"}</div>
           <div className="interview-latest__meta"><Icon.Clock /> {timeAgo(latest.createdAt)}</div>
-          {avg && <div className="interview-latest__avg">Avg across {reports.length} reports: <strong>{avg}%</strong></div>}
+          {avg && <div className="interview-latest__avg">Avg across {reports.length} sessions: <strong>{avg}%</strong></div>}
         </div>
       </div>
       <div className="interview-pills">
@@ -209,35 +210,8 @@ function InterviewCard({ reports, onNavigate }) {
         <div className="interview-pill interview-pill--blue">{latest.preparationPlan?.length || 0} day plan</div>
       </div>
       <button className="module-card__cta module-card__cta--outline" onClick={() => onNavigate("/interview-prep")}>
-        New Prep Session <Icon.ArrowUpRight />
+        Start New Preparation <Icon.ArrowUpRight />
       </button>
-    </div>
-  );
-}
-
-// ─── Quick Actions ────────────────────────────────────────────────────────────
-function QuickActions({ onNavigate }) {
-  const actions = [
-    { label: "Analyze Resume",  sub: "Upload PDF + JD",  icon: <Icon.FileText />,  path: "/resume-analyzer",   accent: "teal"   },
-    { label: "Interview Prep",  sub: "AI model answers", icon: <Icon.Bot />,       path: "/interview-prep",    accent: "blue"   },
-    { label: "Browse Jobs",     sub: "Open positions",   icon: <Icon.Briefcase />, path: "/jobs",              accent: "amber"  },
-    { label: "Prep History",    sub: "Your past reports",icon: <Icon.History />,   path: "/interview-history", accent: "purple" },
-  ];
-  return (
-    <div className="quick-actions" style={{ animationDelay: "0.4s" }}>
-      <div className="section-label">Quick Actions</div>
-      <div className="qa-grid">
-        {actions.map((a, i) => (
-          <button key={a.path} className={`qa-card qa-card--${a.accent}`}
-            style={{ animationDelay: `${0.4 + i * 0.06}s` }}
-            onClick={() => onNavigate(a.path)}>
-            <div className="qa-card__icon">{a.icon}</div>
-            <div className="qa-card__label">{a.label}</div>
-            <div className="qa-card__sub">{a.sub}</div>
-            <div className="qa-card__arrow"><Icon.ArrowUpRight /></div>
-          </button>
-        ))}
-      </div>
     </div>
   );
 }
@@ -245,11 +219,11 @@ function QuickActions({ onNavigate }) {
 // ─── Skills Widget ────────────────────────────────────────────────────────────
 function SkillsWidget({ user, resume }) {
   const skills  = user?.skills?.length ? user.skills : [];
-  const missing = resume?.missingSkills?.slice(0, 4) || [];
+  const missing = resume?.missingSkills?.slice(0, 5) || [];
   return (
     <div className="module-card module-card--compact" style={{ animationDelay: "0.45s" }}>
       <div className="module-card__header">
-        <div className="module-card__title">Your Skills</div>
+        <div className="module-card__title">Your Skills & Gaps</div>
       </div>
       {skills.length > 0 || missing.length > 0 ? (
         <div className="skills-cloud">
@@ -257,14 +231,43 @@ function SkillsWidget({ user, resume }) {
           {missing.map((s) => <span className="skill-tag skill-tag--missing" key={s}>{s}</span>)}
         </div>
       ) : (
-        <div className="skills-empty">Update your profile or analyze a resume to see your skill snapshot.</div>
+        <div className="skills-empty">Update your profile or analyze a resume to view your skill breakdown.</div>
       )}
-      {missing.length > 0 && (
+      {(skills.length > 0 || missing.length > 0) && (
         <div className="skills-legend">
-          <span className="legend-dot legend-dot--have" /> Have &nbsp;
-          <span className="legend-dot legend-dot--missing" /> Gap
+          <span className="legend-dot legend-dot--have" /> Your Skills &nbsp;&nbsp;
+          <span className="legend-dot legend-dot--missing" /> Skills to Improve
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── Quick Actions ────────────────────────────────────────────────────────────
+function QuickActions({ onNavigate }) {
+  const actions = [
+    { label: "Analyze Resume",  sub: "Upload PDF + JD",      icon: <Icon.FileText />, path: "/resume-analyzer",    tone: "peach"  },
+    { label: "Interview Prep",  sub: "AI interview questions", icon: <Icon.Bot />,      path: "/interview-prep",    tone: "lavender" },
+    { label: "Browse Jobs",     sub: "Explore open roles",   icon: <Icon.Briefcase />, path: "/jobs",             tone: "blue"   },
+    { label: "Prep History",    sub: "Previous reports",     icon: <Icon.History />,   path: "/interview-history", tone: "lime"   },
+  ];
+  return (
+    <div className="quick-actions" style={{ animationDelay: "0.4s" }}>
+      <div className="section-label">Quick Actions</div>
+      <div className="qa-grid">
+        {actions.map((a, i) => (
+          <button key={a.path} className={`qa-card qa-card--${a.tone}`}
+            style={{ animationDelay: `${0.4 + i * 0.05}s` }}
+            onClick={() => onNavigate(a.path)}>
+            <div className="qa-card__icon">{a.icon}</div>
+            <div className="qa-card__content">
+              <div className="qa-card__label">{a.label}</div>
+              <div className="qa-card__sub">{a.sub}</div>
+            </div>
+            <div className="qa-card__arrow"><Icon.ArrowUpRight /></div>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -277,12 +280,6 @@ export default function Dashboard() {
   const [applications, setApps] = useState([]);
   const [reports, setReports]   = useState([]);
   const [loading, setLoading]   = useState(true);
-  const [now, setNow]           = useState(new Date());
-
-  useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
 
   useEffect(() => {
     Promise.allSettled([
@@ -309,53 +306,41 @@ export default function Dashboard() {
       : null,
   };
 
-  const clockStr = now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
-  const dateStr  = now.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
-
   if (loading) return (
     <div className="db-loading">
       <div className="db-loading__spinner" />
-      <div className="db-loading__text">Loading your dashboard</div>
+      <div className="db-loading__text">Loading your dashboard...</div>
     </div>
   );
 
   return (
     <div className="db-layout">
-      {/* ── Unified sidebar — receives user so profile row is populated ── */}
       <Sidebar user={user} />
 
       <div className="db-main">
         <header className="db-topbar">
           <div className="db-topbar__left">
             <div className="db-greeting">
-              <span className="db-greeting__text">{greetingByHour()}, <strong>{user?.username || "there"}</strong></span>
-              <span className="db-greeting__level">{user?.experienceLevel || "fresher"} · {user?.email}</span>
+              <h1 className="db-greeting__text">{greetingByHour()}, <strong>{user?.username || "Parth"}</strong>.</h1>
+              <span className="db-greeting__sub">Your career progress and AI-powered insights at a glance.</span>
             </div>
           </div>
           <div className="db-topbar__right">
-            <div className="db-clock">
-              <div className="db-clock__time">{clockStr}</div>
-              <div className="db-clock__date">{dateStr}</div>
-            </div>
-            <button className="db-icon-btn"><Icon.Bell /></button>
+            <button className="db-icon-btn" title="Notifications"><Icon.Bell /></button>
           </div>
         </header>
 
         <main className="db-body">
           <div className="stat-row">
             <StatCard label="Applications" value={appStats.total}
-              sub={appStats.total === 0 ? "Start applying" : "total sent"}
-              accent="blue" delay="0s" onClick={() => navigate("/applications")} />
+              sub="Total applications sent" tone="blue" delay="0s" onClick={() => navigate("/applications")} />
             <StatCard label="Shortlisted" value={appStats.shortlisted}
-              sub={appStats.shortlisted > 0 ? "recruiters noticed you" : "keep applying"}
-              accent="teal" delay="0.06s" onClick={() => navigate("/applications")} />
-            <StatCard label="Avg Match"
+              sub="Recruiters noticed your profile" tone="lime" delay="0.05s" onClick={() => navigate("/applications")} />
+            <StatCard label="Average Match Score"
               value={appStats.avgScore ? `${appStats.avgScore}%` : "—"}
-              sub="across applications"
-              accent="amber" delay="0.12s" onClick={() => navigate("/applications")} />
-            <StatCard label="Prep Reports" value={reports.length}
-              sub={reports.length === 0 ? "No sessions yet" : "interview sessions"}
-              accent="purple" delay="0.18s" onClick={() => navigate("/interview-history")} />
+              sub="Across submitted applications" tone="peach" delay="0.1s" onClick={() => navigate("/applications")} />
+            <StatCard label="Interview Preparation" value={reports.length}
+              sub="Your preparation sessions" tone="lavender" delay="0.15s" onClick={() => navigate("/interview-history")} />
           </div>
 
           <div className="db-grid">

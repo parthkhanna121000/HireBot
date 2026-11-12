@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import Sidebar from "../../shared/Sidebar";
 import { analyzeResume, rewriteBullet, downloadResumePdf } from "../services/resume.api";
@@ -8,7 +7,6 @@ const STORAGE_KEY = "hirebot_resume_result";
 
 // ─── Map backend → display shape (with scoreBreakdown fallback) ───────────────
 function formatForDisplay(data) {
-  // ── scoreBreakdown fallback ───────────────────────────────────────────────
   // If Gemini returned empty/zero scoreBreakdown, build it from basic scores.
   // This fixes the "Why This Score 0 0 0 0 0" bug.
   const rawBD = data.scoreBreakdown || [];
@@ -61,51 +59,140 @@ function formatForDisplay(data) {
   };
 }
 
-// ─── Color helpers ────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 const gradeFromScore = (s) => (s >= 80 ? "A" : s >= 65 ? "B" : s >= 50 ? "C" : "D");
 const gradeLabel     = (g) => ({ A: "Excellent", B: "Good", C: "Average", D: "Poor" }[g]);
-const barColor = (p) =>
-  p >= 75 ? "linear-gradient(90deg,#059669,#10b981)"
-  : p >= 50 ? "linear-gradient(90deg,#d97706,#f59e0b)"
-  : "linear-gradient(90deg,#be123c,#f43f5e)";
-const ringColor  = (s) => (s >= 80 ? "#10b981" : s >= 65 ? "#6366f1" : s >= 50 ? "#f59e0b" : "#f43f5e");
-const severityFg = (s) => ({ high: "#f43f5e", medium: "#f59e0b", low: "#a5b4fc" }[s] || "#8888aa");
-const severityBg = (s) => ({ high: "rgba(244,63,94,0.12)", medium: "rgba(245,158,11,0.12)", low: "rgba(99,102,241,0.12)" }[s] || "rgba(255,255,255,0.04)");
-const impactColor = (i) => ({ high: "#f43f5e", medium: "#f59e0b", low: "#6d6d8a" }[i] || "#6d6d8a");
+const gradeRead      = (g) => ({
+  A: "Your resume lines up closely with this job description.",
+  B: "A good match with a few gaps worth closing.",
+  C: "A partial match. Targeted edits will raise it.",
+  D: "There are significant gaps against this job description.",
+}[g]);
+
+// Tone → semantic class (good / warn / bad). Colour is always paired with text or an icon.
+const toneOf = (p, hi = 70, mid = 45) => (p >= hi ? "good" : p >= mid ? "warn" : "bad");
+const impactTone = (i) => ({ high: "bad", medium: "warn", low: "neutral" }[i] || "warn");
+
+const formatSize = (bytes) =>
+  bytes >= 1024 * 1024 ? `${(bytes / (1024 * 1024)).toFixed(2)} MB` : `${(bytes / 1024).toFixed(1)} KB`;
+
+const wordCount = (t) => (t.trim() ? t.trim().split(/\s+/).length : 0);
+
+// ─── Motion hooks ─────────────────────────────────────────────────────────────
+function usePrefersReducedMotion() {
+  const [reduced] = useState(
+    () => typeof window !== "undefined" && !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+  );
+  return reduced;
+}
+
+function useCountUp(target, reduced, duration = 1200) {
+  const [val, setVal] = useState(reduced ? target : 0);
+  useEffect(() => {
+    if (reduced) { setVal(target); return undefined; }
+    let raf, start;
+    const step = (t) => {
+      if (start === undefined) start = t;
+      const p = Math.min((t - start) / duration, 1);
+      setVal(Math.round(target * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [target, reduced, duration]);
+  return val;
+}
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
-const UploadIcon    = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>;
-const FileTextIcon  = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>;
-const BrainIcon     = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-4.96-.46 2.5 2.5 0 01-1.07-4.69A3 3 0 016.5 9a2.5 2.5 0 01.5-5z"/><path d="M14.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 004.96-.46 2.5 2.5 0 001.07-4.69A3 3 0 0117.5 9a2.5 2.5 0 00-.5-5z"/></svg>;
-const CheckIcon     = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>;
-const XIcon         = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
-const LightbulbIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0018 8 6 6 0 006 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 018.91 14"/></svg>;
-const WandIcon      = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 4V2m0 14v-2M8 9H2m14 0h-2M3.22 3.22l1.42 1.42m12.72 12.72l1.42 1.42M3.22 20.78l1.42-1.42M17.36 6.64l1.42-1.42"/><path d="M5 21l14-14"/></svg>;
-const AlertIcon     = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;
-const SparklesIcon  = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M19 13l.75 2.25L22 16l-2.25.75L19 19l-.75-2.25L16 16l2.25-.75L19 13z"/><path d="M5 17l.5 1.5L7 19l-1.5.5L5 21l-.5-1.5L3 19l1.5-.5L5 17z"/></svg>;
-const FileCheckIcon = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg>;
-const CopyIcon      = () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>;
-const DownloadIcon  = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>;
-const TrashIcon     = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>;
-const TrendUpIcon   = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>;
-const TrendDownIcon = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>;
+const Svg = ({ size = 16, sw = 2, children }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+    {children}
+  </svg>
+);
+const UploadIcon    = ({ size = 18 }) => <Svg size={size}><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></Svg>;
+const FileTextIcon  = ({ size = 16 }) => <Svg size={size}><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></Svg>;
+const BrainIcon     = ({ size = 18 }) => <Svg size={size}><path d="M9.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 01-4.96-.46 2.5 2.5 0 01-1.07-4.69A3 3 0 016.5 9a2.5 2.5 0 01.5-5z"/><path d="M14.5 2A2.5 2.5 0 0112 4.5v15a2.5 2.5 0 004.96-.46 2.5 2.5 0 001.07-4.69A3 3 0 0117.5 9a2.5 2.5 0 00-.5-5z"/></Svg>;
+const CheckIcon     = ({ size = 14 }) => <Svg size={size} sw={2.5}><polyline points="20 6 9 17 4 12"/></Svg>;
+const XIcon         = ({ size = 14 }) => <Svg size={size} sw={2.5}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></Svg>;
+const LightbulbIcon = ({ size = 14 }) => <Svg size={size}><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0018 8 6 6 0 006 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 018.91 14"/></Svg>;
+const WandIcon      = ({ size = 15 }) => <Svg size={size}><path d="M15 4V2m0 14v-2M8 9H2m14 0h-2M3.22 3.22l1.42 1.42m12.72 12.72l1.42 1.42M3.22 20.78l1.42-1.42M17.36 6.64l1.42-1.42"/><path d="M5 21l14-14"/></Svg>;
+const AlertIcon     = ({ size = 16 }) => <Svg size={size}><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></Svg>;
+const SparklesIcon  = ({ size = 14 }) => <Svg size={size}><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M19 13l.75 2.25L22 16l-2.25.75L19 19l-.75-2.25L16 16l2.25-.75L19 13z"/><path d="M5 17l.5 1.5L7 19l-1.5.5L5 21l-.5-1.5L3 19l1.5-.5L5 17z"/></Svg>;
+const FileCheckIcon = ({ size = 15 }) => <Svg size={size}><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></Svg>;
+const CopyIcon      = ({ size = 13 }) => <Svg size={size}><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></Svg>;
+const DownloadIcon  = ({ size = 14 }) => <Svg size={size}><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></Svg>;
+const TrashIcon     = ({ size = 13 }) => <Svg size={size}><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></Svg>;
+const ChevronIcon   = ({ size = 14 }) => <Svg size={size}><polyline points="6 9 12 15 18 9"/></Svg>;
+
+const ToneIcon = ({ tone }) =>
+  tone === "good" ? <CheckIcon/> : tone === "warn" ? <AlertIcon size={14}/> : <XIcon/>;
+
+// ─── Small shared pieces ──────────────────────────────────────────────────────
+// Progress bar that grows from 0 on mount. Colour comes from the tone-* class.
+function Bar({ pct, tone, label, className = "" }) {
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setOn(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+  const v = Math.max(0, Math.min(100, Number(pct) || 0));
+  return (
+    <div className={`az-track ${className}`} role="progressbar" aria-label={label}
+      aria-valuenow={v} aria-valuemin={0} aria-valuemax={100}>
+      <div className={`az-fill tone-${tone}`} style={{ width: `${on ? v : 0}%` }}/>
+    </div>
+  );
+}
+
+function CopyButton({ text, label = "Copy", className = "" }) {
+  const [copied, setCopied] = useState(false);
+  const onClick = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch { /* clipboard unavailable */ }
+  };
+  return (
+    <button type="button" className={`copy-btn ${copied ? "copied" : ""} ${className}`} onClick={onClick}>
+      {copied ? <><CheckIcon size={12}/> Copied</> : <><CopyIcon/> {label}</>}
+    </button>
+  );
+}
+
+function CardHead({ icon, title, count, sub }) {
+  return (
+    <div className="card-head">
+      {icon && <span className="card-icon">{icon}</span>}
+      <div className="card-head-text">
+        <h3 className="card-title">{title}</h3>
+        {sub && <p className="card-sub">{sub}</p>}
+      </div>
+      {count !== undefined && <span className="card-count">{count}</span>}
+    </div>
+  );
+}
 
 // ─── Score Ring ───────────────────────────────────────────────────────────────
 function ScoreRing({ score }) {
-  const r = 50, circ = 2 * Math.PI * r;
-  const fill = (score / 100) * circ, color = ringColor(score), grade = gradeFromScore(score);
+  const reduced = usePrefersReducedMotion();
+  const shown = useCountUp(score, reduced);
+  const r = 52, circ = 2 * Math.PI * r;
+  const grade = gradeFromScore(score);
   return (
-    <div className="score-circle-wrap">
-      <div className="score-ring">
-        <svg width="128" height="128" viewBox="0 0 128 128">
-          <circle cx="64" cy="64" r={r} fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="10"/>
-          <circle cx="64" cy="64" r={r} fill="none" stroke={color} strokeWidth="10" strokeLinecap="round"
-            strokeDasharray={`${fill} ${circ}`}
-            style={{ transition: "stroke-dasharray 1.5s cubic-bezier(0.22,1,0.36,1)", filter: `drop-shadow(0 0 10px ${color}88)` }}/>
+    <div className="score-ring-wrap">
+      <div className="score-ring" role="img" aria-label={`Match score ${score} out of 100, ${gradeLabel(grade)}`}>
+        <svg viewBox="0 0 128 128" aria-hidden="true">
+          <circle className="ring-bg" cx="64" cy="64" r={r}/>
+          <circle className="ring-fg" cx="64" cy="64" r={r} strokeDasharray={`${(shown / 100) * circ} ${circ}`}/>
         </svg>
-        <div className="score-num"><span className="num">{score}</span><span className="denom">/100</span></div>
+        <div className="score-num" aria-hidden="true">
+          <span className="num">{shown}</span>
+          <span className="denom">out of 100</span>
+        </div>
       </div>
-      <span className={`score-grade grade-${grade.toLowerCase()}`}>{gradeLabel(grade)}</span>
+      <span className={`score-grade grade-${grade.toLowerCase()}`}>Grade {grade}: {gradeLabel(grade)}</span>
     </div>
   );
 }
@@ -119,34 +206,43 @@ function UploadPanel({ file, onFile }) {
     const f = e.dataTransfer.files[0];
     if (f && f.type === "application/pdf") onFile(f);
   }, [onFile]);
+  const openPicker = () => inputRef.current.click();
   return (
     <div className="panel-card">
       <div className="panel-header">
-        <div className="panel-title"><div className="panel-icon upload-icon-bg"><UploadIcon/></div>Upload Resume</div>
-        <span className="panel-meta">PDF only · max 3MB</span>
+        <div className="panel-title"><span className="panel-icon"><UploadIcon size={16}/></span>Your resume</div>
+        <span className="panel-meta">PDF only, max 3MB</span>
       </div>
       <div className="panel-body">
         <div className={`upload-zone ${drag ? "drag-over" : ""} ${file ? "has-file" : ""}`}
+          role={file ? undefined : "button"}
+          tabIndex={file ? undefined : 0}
+          aria-label={file ? undefined : "Upload resume PDF. Drop a file here or press Enter to browse."}
+          onKeyDown={(e) => { if (!file && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openPicker(); } }}
           onDragOver={(e) => { e.preventDefault(); setDrag(true); }} onDragLeave={() => setDrag(false)}
-          onDrop={handleDrop} onClick={() => !file && inputRef.current.click()}>
+          onDrop={handleDrop} onClick={() => !file && openPicker()}>
           {file ? (
             <>
               <div className="upload-zone-icon success-icon"><FileCheckIcon/></div>
-              <div className="file-name"><CheckIcon/> {file.name}</div>
-              <span className="file-size">{(file.size / 1024).toFixed(1)} KB</span>
-              <button className="upload-btn danger-btn" onClick={(e) => { e.stopPropagation(); onFile(null); }}>Remove file</button>
+              <div className="file-name" title={file.name}><CheckIcon/> <span>{file.name}</span></div>
+              <span className="file-size">Uploaded · {formatSize(file.size)}</span>
+              <div className="upload-actions">
+                <button type="button" className="upload-btn" onClick={(e) => { e.stopPropagation(); openPicker(); }}>Replace</button>
+                <button type="button" className="upload-btn danger-btn" onClick={(e) => { e.stopPropagation(); onFile(null); }}>Remove file</button>
+              </div>
             </>
           ) : (
             <>
               <div className="upload-zone-icon"><UploadIcon/></div>
               <div className="upload-title">Drop your resume here</div>
-              <div className="upload-sub">or click to browse files</div>
+              <div className="upload-sub">or browse your files</div>
               <div className="file-formats"><span>PDF</span></div>
-              <button className="upload-btn" onClick={(e) => { e.stopPropagation(); inputRef.current.click(); }}>Choose file</button>
+              <button type="button" className="upload-btn" onClick={(e) => { e.stopPropagation(); openPicker(); }}>Choose file</button>
             </>
           )}
         </div>
-        <input ref={inputRef} type="file" accept=".pdf" style={{ display: "none" }} onChange={(e) => onFile(e.target.files[0] || null)}/>
+        <input ref={inputRef} id="az-resume-file" type="file" accept=".pdf" aria-label="Resume PDF file"
+          style={{ display: "none" }} onChange={(e) => onFile(e.target.files[0] || null)}/>
       </div>
     </div>
   );
@@ -160,17 +256,17 @@ function JDPanel({ jd, setJd, role, setRole }) {
   return (
     <div className="panel-card">
       <div className="panel-header">
-        <div className="panel-title"><div className="panel-icon jd-icon-bg"><FileTextIcon/></div>Job Description</div>
-        <span className="panel-meta">{jd.length} chars</span>
+        <label className="panel-title" htmlFor="az-jd"><span className="panel-icon"><FileTextIcon/></span>Job description</label>
+        <span className="panel-meta">{wordCount(jd)} words · {jd.length} chars</span>
       </div>
       <div className="panel-body">
-        <textarea className="jd-textarea"
-          placeholder="Paste the full job description here — requirements, responsibilities, and skills…"
+        <textarea id="az-jd" className="jd-textarea"
+          placeholder="Paste the full job description here: requirements, responsibilities and skills."
           value={jd} onChange={(e) => setJd(e.target.value)}/>
       </div>
       <div className="role-select-row">
-        <label>Role</label>
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
+        <label htmlFor="az-role">Target role</label>
+        <select id="az-role" value={role} onChange={(e) => setRole(e.target.value)}>
           <option value="">Auto-detect from JD</option>
           {ROLES.map((r) => <option key={r}>{r}</option>)}
         </select>
@@ -179,31 +275,78 @@ function JDPanel({ jd, setJd, role, setRole }) {
   );
 }
 
-// ─── Score Breakdown (fixed) ──────────────────────────────────────────────────
+// ─── Scanning state (shown while the analysis request is running) ─────────────
+const SCAN_STEPS = [
+  "Reading your resume",
+  "Extracting skills and experience",
+  "Comparing against the job description",
+  "Checking ATS compatibility",
+  "Preparing your report",
+];
+const SCAN_LINES = [
+  { w: 88 }, { w: 72, hl: 1 }, { w: 94 }, { w: 58 },
+  { w: 90, hl: 2 }, { w: 76 }, { w: 84, hl: 3 }, { w: 52 }, { w: 92 }, { w: 68, hl: 4 },
+];
+
+function ScanPanel({ file, role }) {
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setStep((s) => Math.min(s + 1, SCAN_STEPS.length - 1)), 2600);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <section className="scan-panel" aria-busy="true">
+      <div className="scan-doc" aria-hidden="true">
+        <div className="scan-doc-head">
+          <span className="scan-avatar"/>
+          <span className="scan-name-lines"><i style={{ width: "62%" }}/><i style={{ width: "38%" }}/></span>
+        </div>
+        {SCAN_LINES.map((l, i) => (
+          <span key={i} className={`scan-line ${l.hl ? "hl" : ""}`}
+            style={{ width: `${l.w}%`, "--d": `${(l.hl || 0) * 0.9 + 0.6}s` }}/>
+        ))}
+        <div className="scan-beam"/>
+      </div>
+      <div className="scan-info" role="status" aria-live="polite">
+        <span className="az-kicker">Analyzing</span>
+        <h2 className="scan-title">Reading <em>{file ? file.name : "your resume"}</em></h2>
+        <p className="scan-sub">{role ? `Matching against ${role}.` : "Matching against your job description."} This usually takes a few seconds.</p>
+        <ol className="scan-steps">
+          {SCAN_STEPS.map((s, i) => (
+            <li key={s} className={i < step ? "done" : i === step ? "active" : ""}>
+              <span className="scan-step-mark">{i < step ? <CheckIcon size={12}/> : i + 1}</span>
+              {s}
+            </li>
+          ))}
+        </ol>
+        <div className="scan-progress"><div style={{ width: `${((step + 1) / SCAN_STEPS.length) * 100}%` }}/></div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Score Breakdown ──────────────────────────────────────────────────────────
 function ScoreBreakdownCard({ breakdown }) {
   if (!breakdown?.length) return null;
   return (
-    <div className="score-breakdown-card">
-      <div className="sbc-header">
-        <SparklesIcon/> Why this score — factor breakdown
-      </div>
+    <section className="az-card score-breakdown-card">
+      <CardHead icon={<SparklesIcon/>} title="Why this score" sub="Factor-by-factor breakdown"/>
       <div className="sbc-list">
-        {breakdown.map((item, i) => (
-          <div className="sbc-row" key={i}>
-            <div className="sbc-top">
-              <span className="sbc-factor">{item.factor || `Factor ${i + 1}`}</span>
-              <div className="sbc-track">
-                <div className="sbc-fill" style={{ width: `${item.score}%`, background: barColor(item.score) }}/>
+        {breakdown.map((item, i) => {
+          const t = toneOf(item.score);
+          return (
+            <div className="sbc-row" key={i}>
+              <div className="sbc-top">
+                <span className="sbc-factor">{item.factor || `Factor ${i + 1}`}</span>
+                <Bar pct={item.score} tone={t} label={item.factor || `Factor ${i + 1}`}/>
+                <span className={`sbc-score tone-${t}`}>{item.score}/100</span>
               </div>
-              <span className="sbc-score" style={{ color: item.score >= 70 ? "#10b981" : item.score >= 45 ? "#f59e0b" : "#f43f5e" }}>
-                {item.score}/100
-              </span>
+              {item.reason && <p className="sbc-reason">{item.reason}</p>}
             </div>
-            {item.reason && <p className="sbc-reason">{item.reason}</p>}
-          </div>
-        ))}
+          );
+        })}
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -212,52 +355,46 @@ function HiringOutlookCard({ outlook }) {
   if (!outlook) return null;
   const pct   = outlook.shortlistProbability || 0;
   const iConv = outlook.interviewConversion  || 0;
-  const color = pct >= 70 ? "#10b981" : pct >= 45 ? "#f59e0b" : "#f43f5e";
+  const tone  = toneOf(pct);
   const label = pct >= 70 ? "Strong candidate" : pct >= 45 ? "Borderline" : "At risk of rejection";
-  const riskEmoji = { low: "🟢", medium: "🟡", high: "🔴" }[outlook.riskLevel] || "🟡";
+  const riskTone = { low: "good", medium: "warn", high: "bad" }[outlook.riskLevel] || "warn";
 
   return (
-    <div className="hiring-outlook-card">
-      <div className="hoc-header">
-        <span className="hoc-title">🎯 Hiring Prediction</span>
-        <span className="hoc-badge" style={{ color, background: `${color}18`, border: `1px solid ${color}33` }}>{label}</span>
-      </div>
+    <section className="az-card hiring-outlook-card">
+      <CardHead title="Hiring outlook" sub="An AI estimate from this resume and job description, not a real hiring probability."/>
       <div className="hoc-body">
+        <span className={`status-badge tone-${tone}`}><ToneIcon tone={tone}/>{label}</span>
         <div className="hoc-metrics">
           <div className="hoc-metric">
-            <span className="hoc-metric-label">Shortlist probability</span>
-            <div className="hoc-track"><div className="hoc-fill" style={{ width: `${pct}%`, background: color }}/></div>
-            <span className="hoc-val" style={{ color }}>{pct}%</span>
+            <span className="hoc-metric-label">Estimated shortlist likelihood</span>
+            <Bar pct={pct} tone={tone} label="Estimated shortlist likelihood"/>
+            <span className={`hoc-val tone-${tone}`}>{pct}%</span>
           </div>
           {iConv > 0 && (
             <div className="hoc-metric">
-              <span className="hoc-metric-label">Interview pass rate (if shortlisted)</span>
-              <div className="hoc-track"><div className="hoc-fill" style={{ width: `${iConv}%`, background: "#6366f1" }}/></div>
-              <span className="hoc-val" style={{ color: "#818cf8" }}>{iConv}%</span>
+              <span className="hoc-metric-label">Interview pass rate, if shortlisted</span>
+              <Bar pct={iConv} tone="info" label="Interview pass rate if shortlisted"/>
+              <span className="hoc-val tone-info">{iConv}%</span>
             </div>
           )}
         </div>
-        <div className="hoc-meta">
-          {outlook.riskLevel && (
-            <div className="hoc-risk">
-              <span>{riskEmoji} Risk level:</span>
-              <span style={{ color: { low:"#10b981", medium:"#f59e0b", high:"#f43f5e" }[outlook.riskLevel] || "#f59e0b", fontWeight: 600, textTransform: "capitalize" }}>
-                {outlook.riskLevel}
-              </span>
-            </div>
-          )}
-        </div>
+        {outlook.riskLevel && (
+          <div className="hoc-risk">
+            <span>Risk level</span>
+            <span className={`status-badge status-badge--sm tone-${riskTone}`}><ToneIcon tone={riskTone}/>{outlook.riskLevel}</span>
+          </div>
+        )}
         {outlook.verdict && <p className="hoc-verdict">{outlook.verdict}</p>}
         {outlook.rejectionReasons?.length > 0 && (
           <div className="hoc-reasons">
-            <span className="hoc-reasons-label">🚫 Top rejection risks</span>
+            <span className="mini-label">Top rejection risks</span>
             {outlook.rejectionReasons.map((r, i) => (
               <div className="hoc-reason" key={i}><XIcon/>{r}</div>
             ))}
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -265,85 +402,81 @@ function HiringOutlookCard({ outlook }) {
 function HiringDiagnosisCard({ diagnosis }) {
   if (!diagnosis || (!diagnosis.primaryConcern && !diagnosis.strengths?.length)) return null;
   return (
-    <div className="hiring-diag-card">
-      <div className="hd-header"><AlertIcon/><span>Hiring Diagnosis</span></div>
+    <section className="az-card hiring-diag-card">
+      <CardHead icon={<AlertIcon/>} title="Hiring diagnosis"/>
       <div className="hd-body">
         {diagnosis.primaryConcern && (
           <div className="hd-primary">
-            <span className="hd-label hd-label--red">🔴 Primary hiring blocker</span>
+            <span className="hd-label tone-bad"><XIcon size={12}/>Primary hiring blocker</span>
             <p>{diagnosis.primaryConcern}</p>
           </div>
         )}
         {diagnosis.secondaryGaps?.length > 0 && (
           <div className="hd-group">
-            <span className="hd-label hd-label--amber">🟡 Secondary concerns</span>
-            {diagnosis.secondaryGaps.map((g, i) => <div className="hd-item" key={i}><XIcon/>{g}</div>)}
+            <span className="hd-label tone-warn"><AlertIcon size={12}/>Secondary concerns</span>
+            {diagnosis.secondaryGaps.map((g, i) => <div className="hd-item" key={i}><span className="hd-bullet tone-warn"/>{g}</div>)}
           </div>
         )}
         {diagnosis.strengths?.length > 0 && (
           <div className="hd-group">
-            <span className="hd-label hd-label--green">🟢 What works in your favour</span>
+            <span className="hd-label tone-good"><CheckIcon size={12}/>What works in your favour</span>
             {diagnosis.strengths.map((s, i) => <div className="hd-item hd-item--good" key={i}><CheckIcon/>{s}</div>)}
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }
 
 // ─── Skill Gap Intelligence ───────────────────────────────────────────────────
 function SkillGapIntelligenceCard({ gaps }) {
-  if (!gaps?.length) return null;
   const [open, setOpen] = useState(null);
-  const impactLabel = { high: "🔴 Critical", medium: "🟡 Important", low: "🟢 Optional" };
+  if (!gaps?.length) return null;
+  const impactLabel = { high: "Critical", medium: "Important", low: "Optional" };
   return (
-    <div className="sgi-card">
-      <div className="sgi-header">
-        <AlertIcon/>
-        <span>Skill Gap Intelligence</span>
-        <span className="sgi-sub">Click a gap to see root cause, hiring impact, and fix plan</span>
-      </div>
+    <section className="az-card sgi-card">
+      <CardHead icon={<AlertIcon/>} title="Skill gap intelligence" sub="Open a gap to see why it matters and how to fix it" count={gaps.length}/>
       <div className="sgi-list">
-        {gaps.map((g, i) => (
-          <div className={`sgi-item ${open === i ? "open" : ""}`} key={i}>
-            <button className="sgi-item-header" onClick={() => setOpen(open === i ? null : i)}>
-              <span className="sgi-skill">{g.skill}</span>
-              <span className="sgi-impact" style={{ color: impactColor(g.impact), background: `${impactColor(g.impact)}18` }}>
-                {impactLabel[g.impact] || "🟡 Important"}
-              </span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                style={{ transform: open === i ? "rotate(180deg)" : "none", transition: "transform 0.2s", color: "#44445a", flexShrink: 0 }}>
-                <polyline points="6 9 12 15 18 9"/>
-              </svg>
-            </button>
-            {open === i && (
-              <div className="sgi-item-body">
-                {g.whyMissing && (
-                  <div className="sgi-field">
-                    <span className="sgi-field-label">Why it's absent from your resume</span>
-                    <p>{g.whyMissing}</p>
-                  </div>
-                )}
-                {g.hiringEffect && (
-                  <div className="sgi-field sgi-field--effect">
-                    <span className="sgi-field-label">Impact on hiring decision</span>
-                    <p>{g.hiringEffect}</p>
-                  </div>
-                )}
-                {g.fixPlan?.length > 0 && (
-                  <div className="sgi-field">
-                    <span className="sgi-field-label">How to fix this</span>
-                    <ul className="sgi-fix-list">
-                      {g.fixPlan.map((step, j) => <li key={j}><CheckIcon/>{step}</li>)}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        ))}
+        {gaps.map((g, i) => {
+          const isOpen = open === i;
+          const t = impactTone(g.impact);
+          return (
+            <div className={`sgi-item ${isOpen ? "open" : ""}`} key={i}>
+              <button type="button" className="sgi-item-header" aria-expanded={isOpen} aria-controls={`sgi-body-${i}`}
+                onClick={() => setOpen(isOpen ? null : i)}>
+                <span className="sgi-skill">{g.skill}</span>
+                <span className={`sgi-impact tone-${t}`}>{impactLabel[g.impact] || "Important"}</span>
+                <span className="sgi-chevron"><ChevronIcon/></span>
+              </button>
+              {isOpen && (
+                <div className="sgi-item-body" id={`sgi-body-${i}`}>
+                  {g.whyMissing && (
+                    <div className="sgi-field">
+                      <span className="mini-label">Why it's absent from your resume</span>
+                      <p>{g.whyMissing}</p>
+                    </div>
+                  )}
+                  {g.hiringEffect && (
+                    <div className="sgi-field sgi-field--effect">
+                      <span className="mini-label">Impact on the hiring decision</span>
+                      <p>{g.hiringEffect}</p>
+                    </div>
+                  )}
+                  {g.fixPlan?.length > 0 && (
+                    <div className="sgi-field">
+                      <span className="mini-label">How to fix this</span>
+                      <ul className="sgi-fix-list">
+                        {g.fixPlan.map((step, j) => <li key={j}><CheckIcon/>{step}</li>)}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -351,24 +484,28 @@ function SkillGapIntelligenceCard({ gaps }) {
 function ActionPlanCard({ plan }) {
   if (!plan || (!plan.mustFix?.length && !plan.nextPriority?.length && !plan.optional?.length)) return null;
   const sections = [
-    { label: "🔴 Must fix first — highest hiring impact", items: plan.mustFix,      cls: "red"   },
-    { label: "🟡 Next priority",                          items: plan.nextPriority, cls: "amber" },
-    { label: "🟢 Optional improvements",                  items: plan.optional,     cls: "green" },
-  ];
+    { label: "Must fix first", note: "Highest hiring impact", items: plan.mustFix,      tone: "bad"  },
+    { label: "Next priority",  note: "Do these once the first set is done", items: plan.nextPriority, tone: "warn" },
+    { label: "Optional",       note: "Nice to have",       items: plan.optional,     tone: "good" },
+  ].filter((s) => s.items?.length > 0);
   return (
-    <div className="action-plan-card">
-      <div className="ap-header"><LightbulbIcon/> Prioritised Action Plan</div>
-      <div className="ap-body">
-        {sections.map((sec) => sec.items?.length > 0 ? (
-          <div className={`ap-section ap-section--${sec.cls}`} key={sec.label}>
-            <span className="ap-section-label">{sec.label}</span>
+    <section className="az-card action-plan-card">
+      <CardHead icon={<LightbulbIcon/>} title="Action plan" sub="Work through these in order"/>
+      <ol className="ap-body">
+        {sections.map((sec, n) => (
+          <li className={`ap-section tone-${sec.tone}`} key={sec.label}>
+            <div className="ap-section-head">
+              <span className="ap-step">{n + 1}</span>
+              <span className="ap-section-label">{sec.label}</span>
+              <span className="ap-section-note">{sec.note}</span>
+            </div>
             {sec.items.map((item, i) => (
               <div className="ap-item" key={i}><div className="ap-dot"/><span>{item}</span></div>
             ))}
-          </div>
-        ) : null)}
-      </div>
-    </div>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }
 
@@ -378,25 +515,33 @@ function RankedSuggestionsCard({ suggestions }) {
   const byImpact = { high: [], medium: [], low: [] };
   suggestions.forEach((s) => (byImpact[s.impact] || byImpact.medium).push(s.text));
   const sections = [
-    { key: "high",   label: "🔴 High impact — do these first",  color: "#f43f5e" },
-    { key: "medium", label: "🟡 Medium impact",                  color: "#f59e0b" },
-    { key: "low",    label: "🟢 Low impact",                     color: "#6d6d8a" },
+    { key: "high",   label: "High impact",   note: "Do these first", tone: "bad" },
+    { key: "medium", label: "Medium impact", note: "",               tone: "warn" },
+    { key: "low",    label: "Low impact",    note: "",               tone: "neutral" },
   ];
+  let n = 0;
   return (
-    <div className="ranked-suggestions-card">
-      <div className="rsc-header"><LightbulbIcon/> Ranked Improvements</div>
-      {sections.map((sec) => byImpact[sec.key].length > 0 ? (
-        <div className="rsc-group" key={sec.key}>
-          <div className="rsc-group-label" style={{ color: sec.color }}>{sec.label}</div>
-          {byImpact[sec.key].map((text, i) => (
-            <div className="rsc-item" key={i}>
-              <div className="rsc-dot" style={{ background: sec.color }}/>
-              <span>{text}</span>
+    <section className="az-card ranked-suggestions-card">
+      <CardHead icon={<LightbulbIcon/>} title="Ranked improvements" sub="Most important first"/>
+      <div className="rsc-body">
+        {sections.map((sec) => byImpact[sec.key].length > 0 ? (
+          <div className="rsc-group" key={sec.key}>
+            <div className={`rsc-group-label tone-${sec.tone}`}>
+              <span className="priority-chip">{sec.label}</span>{sec.note && <span className="rsc-note">{sec.note}</span>}
             </div>
-          ))}
-        </div>
-      ) : null)}
-    </div>
+            {byImpact[sec.key].map((text, i) => {
+              n += 1;
+              return (
+                <div className="rsc-item" key={i}>
+                  <span className="rsc-rank">{n}</span>
+                  <span>{text}</span>
+                </div>
+              );
+            })}
+          </div>
+        ) : null)}
+      </div>
+    </section>
   );
 }
 
@@ -406,7 +551,6 @@ function Results({ data, jobRole, onClear }) {
   const [rewriting,   setRewriting]   = useState(false);
   const [rewritten,   setRewritten]   = useState("");
   const [explanation, setExplanation] = useState("");
-  const [copied,      setCopied]      = useState(false);
   const [downloading, setDownloading] = useState(false);
 
   const handleRewrite = async () => {
@@ -430,175 +574,200 @@ function Results({ data, jobRole, onClear }) {
     finally { setDownloading(false); }
   };
 
+  const grade = gradeFromScore(data.score);
+  const skillsPct = data.breakdown[0]?.pct || 0;
+
   return (
     <div className="results-section">
 
-      {/* Score Hero */}
-      <div className="score-hero">
-        <ScoreRing score={data.score}/>
+      {/* Score hero: the focal point */}
+      <section className="score-hero">
+        <div className="score-main">
+          <span className="az-kicker">Resume match score</span>
+          <ScoreRing score={data.score}/>
+          <p className="score-read">{gradeRead(grade)}</p>
+        </div>
         <div className="score-breakdown">
           <div className="breakdown-header">
-            <div className="breakdown-title">Match Breakdown</div>
-            <div className="breakdown-sub">vs. job description</div>
+            <h2 className="breakdown-title">Match breakdown</h2>
+            <p className="breakdown-sub">Your resume compared with the job description</p>
           </div>
-          {data.breakdown.map((b) => (
-            <div className="breakdown-bar-row" key={b.label}>
-              <span className="bar-label">{b.label}</span>
-              <div className="bar-track"><div className="bar-fill" style={{ width: `${b.pct}%`, background: barColor(b.pct) }}/></div>
-              <span className="bar-pct">{b.pct}%</span>
-            </div>
-          ))}
+          {data.breakdown.map((b) => {
+            const t = toneOf(b.pct, 75, 50);
+            return (
+              <div className="breakdown-bar-row" key={b.label}>
+                <span className="bar-label">{b.label}</span>
+                <Bar pct={b.pct} tone={t} label={b.label}/>
+                <span className="bar-pct">{b.pct}%</span>
+              </div>
+            );
+          })}
           <div className="score-hero-actions">
-            <button className="pdf-btn" onClick={handleDownloadPdf} disabled={downloading}>
-              <DownloadIcon/> {downloading ? "Generating PDF…" : "Download Optimized Resume"}
+            <button type="button" className="btn btn--primary" onClick={handleDownloadPdf} disabled={downloading}>
+              <DownloadIcon/> {downloading ? "Generating PDF…" : "Download optimized resume"}
             </button>
-            <button className="clear-btn" onClick={onClear}><TrashIcon/> New Analysis</button>
+            <button type="button" className="btn btn--secondary" onClick={onClear}><TrashIcon/> New analysis</button>
           </div>
         </div>
+      </section>
+
+      {/* Hiring outlook + diagnosis */}
+      <div className="bento bento--2">
+        <HiringOutlookCard outlook={data.hiringOutlook}/>
+        <HiringDiagnosisCard diagnosis={data.hiringDiagnosis}/>
       </div>
 
-      {/* Hiring Outlook */}
-      <HiringOutlookCard outlook={data.hiringOutlook}/>
-
-      {/* Hiring Diagnosis */}
-      <HiringDiagnosisCard diagnosis={data.hiringDiagnosis}/>
-
-      {/* Score Breakdown — fixed, no longer shows 0s */}
+      {/* Why this score */}
       <ScoreBreakdownCard breakdown={data.scoreBreakdown}/>
 
-      {/* Three-col cards */}
-      <div className="results-grid">
-        <div className="result-card">
-          <div className="rc-header">
-            <div className="rc-icon" style={{ background: "rgba(244,63,94,0.1)", color: "#f43f5e" }}><XIcon/></div>
-            <span className="rc-title">Missing Skills</span>
-            <span className="rc-count">{data.missingSkills.length}</span>
+      {/* Skills bento */}
+      <div className="bento bento--3">
+        <section className="az-card result-card">
+          <CardHead icon={<XIcon/>} title="Skills breakdown" count={data.missingSkills.length}/>
+          <div className="coverage">
+            <div className="coverage-row">
+              <span>Skill coverage</span>
+              <strong className={`tone-${toneOf(skillsPct, 75, 50)}`}>{skillsPct}%</strong>
+            </div>
+            <Bar pct={skillsPct} tone={toneOf(skillsPct, 75, 50)} label="Skill coverage"/>
           </div>
+          <span className="mini-label">Missing skills</span>
           <div className="tag-list">
             {data.missingSkills.length > 0
-              ? data.missingSkills.map((s) => <span className="tag tag--missing" key={s}>{s}</span>)
-              : <span className="tag-empty">None detected ✓</span>}
+              ? data.missingSkills.map((s) => <span className="tag tag--missing" key={s}><XIcon size={11}/>{s}</span>)
+              : <span className="tag-empty">None detected</span>}
           </div>
-        </div>
-        <div className="result-card">
-          <div className="rc-header">
-            <div className="rc-icon" style={{ background: "rgba(245,158,11,0.1)", color: "#f59e0b" }}><AlertIcon/></div>
-            <span className="rc-title">Skill Gaps</span>
-            <span className="rc-count">{data.skillGaps.length}</span>
-          </div>
+        </section>
+        <section className="az-card result-card">
+          <CardHead icon={<AlertIcon/>} title="Skill gaps" count={data.skillGaps.length}/>
           <div className="gap-list">
             {data.skillGaps.length > 0
               ? data.skillGaps.map((g) => (
                 <div className="gap-item" key={g.skill}>
                   <span className="gap-skill">{g.skill}</span>
-                  <span className="gap-severity" style={{ color: severityFg(g.severity), background: severityBg(g.severity) }}>{g.severity}</span>
+                  <span className={`gap-severity tone-${impactTone(g.severity)}`}>{g.severity}</span>
                 </div>
               ))
-              : <span className="tag-empty">No critical gaps ✓</span>}
+              : <span className="tag-empty">No critical gaps</span>}
           </div>
-        </div>
-        <div className="result-card">
-          <div className="rc-header">
-            <div className="rc-icon" style={{ background: "rgba(99,102,241,0.1)", color: "#818cf8" }}><LightbulbIcon/></div>
-            <span className="rc-title">AI Suggestions</span>
-            <span className="rc-count">{data.suggestions.length}</span>
-          </div>
+        </section>
+        <section className="az-card result-card">
+          <CardHead icon={<LightbulbIcon/>} title="AI suggestions" count={data.suggestions.length}/>
           <div className="suggestion-list">
             {data.suggestions.map((s, i) => (
               <div className="suggestion-item" key={i}>
-                <div className={`s-dot s-dot--${["blue","green","amber","violet","green"][i % 5]}`}/>
+                <div className="s-dot"/>
                 <span className="s-text">{s}</span>
               </div>
             ))}
           </div>
-        </div>
+        </section>
       </div>
 
       {/* ATS Issues */}
       {data.atsIssues.length > 0 && (
-        <div className="ats-card">
+        <section className="ats-card">
           <div className="ats-icon"><AlertIcon/></div>
           <div className="ats-content">
-            <div className="ats-title">ATS Compatibility Issues</div>
-            <div className="tag-list" style={{ marginTop: "0.5rem" }}>
-              {data.atsIssues.map((issue, i) => <span className="tag tag--warning" key={i}>{issue}</span>)}
+            <h3 className="ats-title">ATS compatibility issues</h3>
+            <div className="tag-list">
+              {data.atsIssues.map((issue, i) => <span className="tag tag--warning" key={i}><AlertIcon size={11}/>{issue}</span>)}
             </div>
           </div>
-        </div>
+        </section>
       )}
 
       {/* Skill Gap Intelligence */}
       <SkillGapIntelligenceCard gaps={data.skillGapIntelligence}/>
 
-      {/* Ranked Suggestions */}
-      <RankedSuggestionsCard suggestions={data.rankedSuggestions}/>
+      {/* Action plan + ranked suggestions */}
+      <div className="bento bento--2">
+        <ActionPlanCard plan={data.actionPlan}/>
+        <RankedSuggestionsCard suggestions={data.rankedSuggestions}/>
+      </div>
 
-      {/* Action Plan */}
-      <ActionPlanCard plan={data.actionPlan}/>
-
-      {/* Bullet Rewrites */}
+      {/* Bullet rewrites from the analysis */}
       {data.bulletRewrites.length > 0 && (
-        <div className="rewrites-panel">
-          <div className="rewrites-header"><WandIcon/> AI-Generated Bullet Rewrites<span className="ai-badge"><div className="ai-dot"/> Gemini</span></div>
+        <section className="az-card rewrites-panel">
+          <div className="card-head">
+            <span className="card-icon"><WandIcon/></span>
+            <div className="card-head-text">
+              <h3 className="card-title">AI-generated bullet rewrites</h3>
+              <p className="card-sub">Before and after, ready to copy</p>
+            </div>
+            <span className="ai-badge"><span className="ai-dot"/> Gemini</span>
+          </div>
           <div className="rewrites-list">
             {data.bulletRewrites.map((r, i) => (
               <div className="rewrite-item-block" key={i}>
-                <div className="rewrite-before"><span className="rewrite-label before">Before</span>{r.original}</div>
-                <div className="rewrite-after"><span className="rewrite-label after">After</span>{r.improved}</div>
+                <div className="rewrite-before"><span className="rewrite-label before">Original</span>{r.original}</div>
+                <div className="rewrite-after">
+                  <span className="rewrite-label after">Improved</span>{r.improved}
+                  <div className="rewrite-actions"><CopyButton text={r.improved || ""} label="Copy improved"/></div>
+                </div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
       {/* Good / Weak parts */}
       {(data.goodParts.length > 0 || data.weakParts.length > 0) && (
         <div className="parts-grid">
           {data.goodParts.length > 0 && (
-            <div className="parts-col parts-col--good">
-              <div className="parts-col-title"><CheckIcon/> Strong Sections</div>
+            <section className="parts-col parts-col--good">
+              <h3 className="parts-col-title"><CheckIcon/> Strong sections</h3>
               {data.goodParts.map((p, i) => <div className="parts-item" key={i}>{p}</div>)}
-            </div>
+            </section>
           )}
           {data.weakParts.length > 0 && (
-            <div className="parts-col parts-col--weak">
-              <div className="parts-col-title"><XIcon/> Needs Improvement</div>
+            <section className="parts-col parts-col--weak">
+              <h3 className="parts-col-title"><XIcon/> Needs improvement</h3>
               {data.weakParts.map((p, i) => <div className="parts-item" key={i}>{p}</div>)}
-            </div>
+            </section>
           )}
         </div>
       )}
 
-      {/* Manual Bullet Rewriter */}
-      <div className="rewrite-panel">
-        <div className="rewrite-header">
-          <div className="rw-title"><WandIcon/> AI Bullet Point Rewriter</div>
-          <span className="ai-badge"><div className="ai-dot"/> AI Powered</span>
+      {/* Manual bullet rewriter */}
+      <section className="az-card rewrite-panel">
+        <div className="card-head">
+          <span className="card-icon"><WandIcon/></span>
+          <div className="card-head-text">
+            <h3 className="card-title">AI bullet point rewriter</h3>
+            <p className="card-sub">Paste a weak bullet and get a stronger version</p>
+          </div>
+          <span className="ai-badge"><span className="ai-dot"/> AI powered</span>
         </div>
         <div className="rewrite-body">
           <div className="bullet-input-row">
-            <textarea placeholder='Paste a weak bullet — e.g. "Worked on backend features and fixed bugs"'
+            <textarea aria-label="Resume bullet point to rewrite"
+              placeholder='Paste a weak bullet, e.g. "Worked on backend features and fixed bugs"'
               value={bullet} onChange={(e) => setBullet(e.target.value)}/>
-            <button className="rewrite-btn" onClick={handleRewrite} disabled={rewriting || !bullet.trim()}>
-              {rewriting ? "Rewriting…" : "✦ Improve"}
+            <button type="button" className="btn btn--primary rewrite-btn" onClick={handleRewrite} disabled={rewriting || !bullet.trim()}>
+              {rewriting ? "Rewriting…" : <><SparklesIcon/> Improve</>}
             </button>
           </div>
           {(rewritten || rewriting) && (
-            <div className="rewrite-output">
+            <div className="rewrite-output" aria-live="polite">
               {rewriting
                 ? <span className="rewriting-msg">Rewriting your bullet point…</span>
                 : <>
-                    <span className="rewrite-result">{rewritten}</span>
-                    {explanation && <p className="rewrite-explanation">{explanation}</p>}
-                    <button className={`copy-btn ${copied ? "copied" : ""}`}
-                      onClick={() => { navigator.clipboard.writeText(rewritten); setCopied(true); setTimeout(() => setCopied(false), 2000); }}>
-                      {copied ? "✓ Copied" : <><CopyIcon/> Copy</>}
-                    </button>
+                    <div className="ro-block ro-block--before">
+                      <span className="rewrite-label before">Original</span>
+                      <p>{bullet}</p>
+                    </div>
+                    <div className="ro-block ro-block--after">
+                      <span className="rewrite-label after">Improved</span>
+                      <p className="rewrite-result">{rewritten}</p>
+                      {explanation && <p className="rewrite-explanation">{explanation}</p>}
+                      <CopyButton text={rewritten}/>
+                    </div>
                   </>}
             </div>
           )}
         </div>
-      </div>
+      </section>
 
     </div>
   );
@@ -642,48 +811,45 @@ export default function ResumeAnalyzer() {
 
   return (
     <div className="analyzer-layout">
-      <div className="az-orb az-orb-1"/><div className="az-orb az-orb-2"/>
       <Sidebar/>
       <div className="analyzer-main">
-        <header className="analyzer-topbar">
-          <div className="topbar-left">
-            <div className="topbar-title">Resume Analyzer</div>
-            <div className="topbar-sub">AI-powered matching & optimization</div>
-          </div>
-          <div className="topbar-actions">
-            <div className="status-pill"><div className="dot"/> AI Online</div>
-          </div>
-        </header>
         <main className="analyzer-body">
-          {!result && (
+          <header className="az-header">
+            <div className="az-header-text">
+              <h1 className="az-title">Resume <em>Analyzer</em></h1>
+              <p className="az-lede">
+                Upload your resume, paste the job description, and get a match score, the skills you're missing and a plan to close the gap.
+              </p>
+            </div>
+            <div className="status-pill"><span className="dot"/> AI online</div>
+          </header>
+
+          {!result && loading && <ScanPanel file={file} role={role}/>}
+
+          {!result && !loading && (
             <>
-              <div className="section-heading"><span className="sh-label">Input</span></div>
               <div className="input-panels">
                 <UploadPanel file={file} onFile={setFile}/>
                 <JDPanel jd={jd} setJd={setJd} role={role} setRole={setRole}/>
               </div>
               <div className="analyze-btn-row">
-                <button className={`analyze-btn ${loading ? "loading" : ""}`}
-                  onClick={handleAnalyze} disabled={loading || !canAnalyze}>
-                  {loading ? <><div className="spinner"/> Analyzing with Gemini AI…</> : <><SparklesIcon/> Analyze Resume</>}
+                <button type="button" className="btn btn--primary btn--lg analyze-btn"
+                  onClick={handleAnalyze} disabled={!canAnalyze}>
+                  <SparklesIcon/> Analyze resume
                 </button>
-                {!canAnalyze && <p className="analyze-hint">Upload a PDF resume and paste a job description to begin</p>}
+                {!canAnalyze && <p className="analyze-hint">Upload a PDF resume and paste a job description to begin.</p>}
               </div>
-              {error && <p className="error-msg">{error}</p>}
-              {canAnalyze && !loading && (
+              {error && <p className="error-msg" role="alert"><AlertIcon size={15}/> {error}</p>}
+              {canAnalyze && (
                 <div className="empty-state">
                   <div className="empty-icon"><BrainIcon/></div>
-                  <p>Click "Analyze Resume" to get your AI-powered match score, skill gaps, and improvement tips.</p>
+                  <p>Select "Analyze resume" to get your match score, skill gaps and improvement tips.</p>
                 </div>
               )}
             </>
           )}
-          {result && (
-            <>
-              <div className="section-heading"><span className="sh-label">Results</span></div>
-              <Results data={result} jobRole={role} onClear={handleClear}/>
-            </>
-          )}
+
+          {result && <Results data={result} jobRole={role} onClear={handleClear}/>}
         </main>
       </div>
     </div>

@@ -1,132 +1,62 @@
-// sidebar.scss — Dark Navy/Slate AI Product Theme (Linear & Vercel Inspired)
+// sidebar.scss — HireBot Editorial Design System
 
-// ── Tokens ────────────────────────────────────────────────────────────────────
-$sb-bg:              #0A0E17;
-$sb-sidebar-bg:      #131826;
-$sb-surface:         #1A2234;
-$sb-border:          rgba(255, 255, 255, 0.07);
-$sb-border-glow:     rgba(59, 130, 246, 0.25);
-$sb-text1:           #E5E7EB;
-$sb-text2:           #8B93A6;
-$sb-text3:           #4E5D78;
-$sb-accent:          #3B82F6;
-$sb-accent-teal:     #14B8A6;
-$sb-red-dim:         rgba(239, 68, 68, 0.12);
-$sb-topbar-h:        60px;
-$sb-mobile-topbar-h: 60px;
-$sb-sidebar-width:   180px; // Reduced from 220px for a sleeker look
+$sb-paper:          #f5f2e9;
+$sb-sidebar-bg:     #f5f2e9;
+$sb-card-surface:   #fffefa;
+$sb-text1:          #171a24;
+$sb-text2:          #666a73;
+$sb-text3:          #9ca3af;
+$sb-accent:         #3158ed;
+$sb-accent-lime:    #d8f36a;
+$sb-border:         rgba(23, 26, 36, 0.08);
+$sb-topbar-h:       68px;
+$sb-mobile-topbar-h:60px;
+$sb-sidebar-width:  220px;
 
-// ── Visibility helpers ────────────────────────────────────────────────────────
 .hb-desktop-only {
-  @media (max-width: 768px) {
-    display: none !important;
-  }
+  @media (max-width: 768px) { display: none !important; }
 }
 
 .hb-mobile-only {
   display: none;
-
-  @media (max-width: 768px) {
-    display: flex !important;
-  }
+  @media (max-width: 768px) { display: flex !important; }
 }
 
-// ── Keyframes ─────────────────────────────────────────────────────────────────
-@keyframes indicatorPulse {
-  0%, 100% { box-shadow: 0 0 6px rgba(59, 130, 246, 0.35); }
-  50%      { box-shadow: 0 0 10px rgba(59, 130, 246, 0.55); }
-}
-
-// ── Sidebar shell ─────────────────────────────────────────────────────────────
 .hb-sidebar {
   background: $sb-sidebar-bg;
   border-right: 1px solid $sb-border;
   display: flex;
   flex-direction: column;
   height: 100vh;
+  width: $sb-sidebar-width;
   overflow: hidden;
   position: relative;
-  box-shadow: 20px 0 50px rgba(0, 0, 0, 0.6);
+  font-family: "Inter", sans-serif;
 
-  &__glow {
-    position: absolute;
-    top: -60px;
-    left: -60px;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  &__collapse-btn {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid $sb-border;
-    color: $sb-text2;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 7px;
+  &__logo {
+    height: $sb-topbar-h;
     display: flex;
     align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-
-    &:hover {
-      color: $sb-text1;
-      background: rgba(59, 130, 246, 0.1);
-      border-color: rgba(59, 130, 246, 0.3);
-    }
+    justify-content: space-between;
+    padding: 0 16px;
+    border-bottom: 1px solid $sb-border;
+    flex-shrink: 0;
+    background: rgba(255, 254, 250, 0.6);
   }
 
-  &__close-btn {
-    display: none;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid $sb-border;
-    color: $sb-text2;
-    cursor: pointer;
-    padding: 7px;
-    border-radius: 9px;
+  &__logo-right {
+    display: flex;
     align-items: center;
-    justify-content: center;
-
-    @media (max-width: 768px) {
-      display: flex;
-    }
-  }
-
-  &--collapsed {
-    .hb-nav-item {
-      justify-content: center;
-      padding: 10px;
-    }
-    .hb-profile {
-      justify-content: center;
-      padding: 9px;
-    }
-    .hb-logout {
-      justify-content: center;
-      padding: 9px;
-    }
+    gap: 8px;
   }
 }
 
-// ── Desktop wrapper ───────────────────────────────────────────────────────────
 .hb-sidebar-desktop {
   display: block;
-
-  .hb-sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 50;
-  }
-
-  @media (max-width: 768px) {
-    display: none;
-  }
+  .hb-sidebar { position: fixed; top: 0; left: 0; z-index: 50; }
+  @media (max-width: 768px) { display: none; }
 }
 
-// ── Mobile drawer wrapper ─────────────────────────────────────────────────────
 .hb-sidebar-mobile {
   position: fixed;
   top: 0;
@@ -134,33 +64,19 @@ $sb-sidebar-width:   180px; // Reduced from 220px for a sleeker look
   z-index: 200;
   height: 100vh;
   width: $sb-sidebar-width;
-
-  .hb-sidebar {
-    position: relative;
-    height: 100vh;
-    width: $sb-sidebar-width !important;
-  }
-
-  @media (min-width: 769px) {
-    display: none;
-  }
+  @media (min-width: 769px) { display: none; }
 }
 
-// ── Mobile backdrop ───────────────────────────────────────────────────────────
 .hb-sidebar-backdrop {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(10, 14, 23, 0.8);
-  backdrop-filter: blur(6px);
+  background: rgba(23, 26, 36, 0.5);
+  backdrop-filter: blur(4px);
   z-index: 199;
-
-  @media (max-width: 768px) {
-    display: block;
-  }
+  @media (max-width: 768px) { display: block; }
 }
 
-// ── Mobile Top Bar ────────────────────────────────────────────────────────────
 .hb-mobile-topbar {
   display: none;
   position: fixed;
@@ -177,7 +93,7 @@ $sb-sidebar-width:   180px; // Reduced from 220px for a sleeker look
   backdrop-filter: blur(12px);
 
   &__menu-btn {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(23, 26, 36, 0.03);
     border: 1px solid $sb-border;
     color: $sb-text2;
     cursor: pointer;
@@ -185,107 +101,48 @@ $sb-sidebar-width:   180px; // Reduced from 220px for a sleeker look
     border-radius: 9px;
     display: flex;
     align-items: center;
-    justify-content: center;
   }
 
-  @media (max-width: 768px) {
-    display: flex;
-  }
+  @media (max-width: 768px) { display: flex; }
 }
 
-// ── Logo row ──────────────────────────────────────────────────────────────────
-.hb-sidebar__logo {
-  height: $sb-topbar-h;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 12px;
-  border-bottom: 1px solid $sb-border;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 1;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.01) 0%, transparent 100%);
-}
-
-.hb-sidebar__logo-right {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-// ── Navigation container ──────────────────────────────────────────────────────
 .hb-sidebar__nav {
   flex: 1;
-  padding: 16px 8px;
+  padding: 16px 12px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 16px;
   overflow-y: auto;
-  overflow-x: hidden;
-  position: relative;
-  z-index: 1;
   scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  &::-webkit-scrollbar { display: none; }
 }
 
-// ── Nav section ───────────────────────────────────────────────────────────────
 .hb-sidebar__section {
-  margin-bottom: 12px;
+  margin-bottom: 4px;
 }
 
 .hb-sidebar__section-label {
   font-family: "JetBrains Mono", monospace;
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 600;
   color: $sb-text3;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  padding: 6px 8px 5px;
+  padding: 6px 8px 4px;
 }
 
-// ── Tooltip for collapsed state ───────────────────────────────────────────────
 .hb-nav-item-wrapper {
   position: relative;
-
-  .hb-nav-tooltip {
-    position: absolute;
-    left: calc(100% + 12px);
-    top: 50%;
-    transform: translateY(-50%);
-    background: #1a2234;
-    color: $sb-text1;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
-    white-space: nowrap;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
-    border: 1px solid rgba(59, 130, 246, 0.2);
-    pointer-events: none;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    z-index: 1000;
-  }
-
-  &:hover .hb-nav-tooltip {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(-50%) translateX(2px);
-  }
+  margin-bottom: 3px;
 }
 
-// ── Nav item ──────────────────────────────────────────────────────────────────
 .hb-nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 8px;
-  border-radius: 9px;
-  font-size: 12.5px;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13.5px;
   font-weight: 500;
   color: $sb-text2;
   background: transparent;
@@ -295,16 +152,15 @@ $sb-sidebar-width:   180px; // Reduced from 220px for a sleeker look
   text-align: left;
   font-family: inherit;
   position: relative;
-  margin-bottom: 2px;
 
   &__icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
+    width: 18px;
     flex-shrink: 0;
-    opacity: 0.6;
-    transition: all 0.2s ease;
+    color: $sb-text2;
+    transition: color 0.2s ease;
   }
 
   &__label {
@@ -316,24 +172,12 @@ $sb-sidebar-width:   180px; // Reduced from 220px for a sleeker look
 
   &__badge {
     font-family: "JetBrains Mono", monospace;
-    font-size: 9px;
-    font-weight: 600;
-    background: rgba(59, 130, 246, 0.1);
-    color: $sb-accent;
-    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    background: $sb-accent-lime;
+    color: #1f2937;
+    padding: 2px 7px;
     border-radius: 20px;
-    border: 1px solid rgba(59, 130, 246, 0.25);
-  }
-
-  &__mini-badge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 5px;
-    height: 5px;
-    background: $sb-accent;
-    border-radius: 50%;
-    box-shadow: 0 0 6px rgba(59, 130, 246, 0.6);
   }
 
   &__indicator {
@@ -344,141 +188,109 @@ $sb-sidebar-width:   180px; // Reduced from 220px for a sleeker look
     width: 3px;
     background: $sb-accent;
     border-radius: 0 4px 4px 0;
-    animation: indicatorPulse 2.4s ease-in-out infinite;
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 254, 250, 0.7);
     color: $sb-text1;
-    border-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(23, 26, 36, 0.05);
 
-    .hb-nav-item__icon {
-      opacity: 1;
-      color: $sb-accent;
-    }
+    .hb-nav-item__icon { color: $sb-accent; }
   }
 
   &--active {
-    background: rgba(59, 130, 246, 0.1);
+    background: $sb-card-surface;
     color: $sb-text1;
     font-weight: 600;
-    border-color: rgba(59, 130, 246, 0.25);
+    border-color: $sb-border;
+    box-shadow: 0 4px 16px -2px rgba(23, 26, 36, 0.05);
 
-    .hb-nav-item__icon {
-      opacity: 1;
-      color: $sb-accent;
-    }
-
-    .hb-nav-item__badge {
-      background: rgba(20, 184, 166, 0.15);
-      color: $sb-accent-teal;
-      border-color: rgba(20, 184, 166, 0.3);
-    }
+    .hb-nav-item__icon { color: $sb-accent; }
   }
 }
 
-// ── Divider ───────────────────────────────────────────────────────────────────
 .hb-sidebar__divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-  margin: 10px 0;
+  background: $sb-border;
+  margin: 12px 0;
 }
 
-// ── Footer ────────────────────────────────────────────────────────────────────
 .hb-sidebar__footer {
-  padding: 0 8px 16px;
+  padding: 0 12px 16px;
   flex-shrink: 0;
-  position: relative;
-  z-index: 1;
 }
 
-// ── Profile button ────────────────────────────────────────────────────────────
 .hb-profile {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px;
+  gap: 10px;
+  padding: 9px 10px;
   border-radius: 11px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 254, 250, 0.5);
+  border: 1px solid $sb-border;
   cursor: pointer;
   width: 100%;
   text-align: left;
   font-family: inherit;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   transition: all 0.2s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.08);
+    background: $sb-card-surface;
   }
 
   &__avatar {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border-radius: 8px;
-    background: rgba(59, 130, 246, 0.14);
-    border: 1px solid rgba(59, 130, 246, 0.25);
+    background: rgba(49, 88, 237, 0.1);
+    border: 1px solid rgba(49, 88, 237, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: "JetBrains Mono", monospace;
-    font-size: 9.5px;
+    font-size: 10.5px;
     font-weight: 700;
-    color: #5b9df9;
+    color: $sb-accent;
     flex-shrink: 0;
     text-transform: uppercase;
   }
 
-  &__info {
-    flex: 1;
-    min-width: 0;
-  }
+  &__info { flex: 1; min-width: 0; }
 
   &__name {
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 600;
     color: $sb-text1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1.3;
   }
 
   &__role {
     font-family: "JetBrains Mono", monospace;
-    font-size: 9px;
+    font-size: 9.5px;
     color: $sb-text2;
     margin-top: 1px;
-    text-transform: capitalize;
   }
 
   &__gear {
     color: $sb-text3;
     display: flex;
     align-items: center;
-    opacity: 0.6;
-    flex-shrink: 0;
-    transition: color 0.2s ease;
-  }
-
-  &:hover &__gear {
-    opacity: 1;
-    color: $sb-accent;
   }
 }
 
-// ── Logout button ─────────────────────────────────────────────────────────────
 .hb-logout {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px;
+  padding: 9px 10px;
   border-radius: 9px;
   background: transparent;
   border: 1px solid transparent;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 500;
   color: $sb-text2;
   width: 100%;
@@ -486,52 +298,22 @@ $sb-sidebar-width:   180px; // Reduced from 220px for a sleeker look
   font-family: inherit;
   transition: all 0.2s ease;
 
-  svg {
-    flex-shrink: 0;
-    opacity: 0.6;
-    transition: opacity 0.2s ease;
-  }
-
+  svg { flex-shrink: 0; opacity: 0.7; }
   &:hover {
-    background: $sb-red-dim;
-    color: #f87171;
-    border-color: rgba(239, 68, 68, 0.2);
-
-    svg {
-      opacity: 1;
-    }
+    background: rgba(239, 68, 68, 0.08);
+    color: #dc2626;
   }
 }
 
-// ── Layout helper ─────────────────────────────────────────────────────────────
+// Layout Offset for Main Content
 .hb-page-with-sidebar {
   min-height: 100vh;
-  background: $sb-bg;
-  transition: margin-left 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background: $sb-paper;
   margin-left: $sb-sidebar-width;
+  transition: margin-left 0.25s ease;
 
   @media (max-width: 768px) {
     margin-left: 0;
     padding-top: $sb-mobile-topbar-h;
-  }
-}
-
-body.sidebar-is-collapsed {
-  .hb-page-with-sidebar {
-    margin-left: 68px;
-
-    @media (max-width: 768px) {
-      margin-left: 0;
-    }
-  }
-}
-
-body.sidebar-is-expanded {
-  .hb-page-with-sidebar {
-    margin-left: $sb-sidebar-width;
-
-    @media (max-width: 768px) {
-      margin-left: 0;
-    }
   }
 }
