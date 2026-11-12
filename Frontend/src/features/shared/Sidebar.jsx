@@ -36,8 +36,8 @@ const NAV_SECTIONS = [
   {
     label: "Main",
     items: [
-      { path: "/dashboard",       label: "Dashboard",       icon: <GridIcon /> },
-      { path: "/jobs",            label: "Browse Jobs",     icon: <BriefcaseIcon />, badge: "12" },
+      { path: "/dashboard",        label: "Dashboard",        icon: <GridIcon /> },
+      { path: "/jobs",             label: "Browse Jobs",      icon: <BriefcaseIcon />, badge: "12" },
       { path: "/resume-analyzer", label: "Resume Analyzer", icon: <FileTextIcon /> },
     ],
   },
@@ -64,8 +64,6 @@ export default function Sidebar({ user }) {
   const { pathname } = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const EXPANDED_WIDTH = 220; // Increased width to prevent label truncation
-
   useEffect(() => {
     setMobileOpen(false);
     window.scrollTo(0, 0);
@@ -90,8 +88,8 @@ export default function Sidebar({ user }) {
     <aside className="hb-sidebar">
       {/* Brand Header */}
       <div className="hb-sidebar__logo">
-        <div className="hb-sidebar__brand-container">
-          <HireBotLogo size={28} textSize={15} />
+        <div className="hb-sidebar__brand-container" onClick={() => navigate("/dashboard")} style={{ cursor: "pointer" }}>
+          <HireBotLogo size={24} textSize={14} textColor="#0f172a" />
         </div>
         <div className="hb-sidebar__logo-right">
           <NotificationBell />
@@ -212,7 +210,9 @@ export default function Sidebar({ user }) {
         >
           <MenuIcon open={false} />
         </button>
-        <HireBotLogo size={24} textSize={14} />
+        <div onClick={() => navigate("/dashboard")} style={{ cursor: "pointer" }}>
+          <HireBotLogo size={24} textSize={14} textColor="#0f172a" />
+        </div>
         <NotificationBell />
       </div>
 
